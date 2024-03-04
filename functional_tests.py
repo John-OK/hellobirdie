@@ -1,5 +1,8 @@
 import unittest
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
 
 class NewVisitorTest(unittest.TestCase):
     def setUp(self):
@@ -14,8 +17,25 @@ class NewVisitorTest(unittest.TestCase):
         # He goes to the hellobirdie homepage.
         self.browser.get("http://localhost:8000")
 
-        # He confirms he's at the right webpage from the page title
+        # He confirms he's at the right webpage from the page title and header
         self.assertIn("HelloBirdie", self.browser.title)
+        header_text = self.browser.find_element(By.TAG_NAME, "h1").text
+        self.assertIn("HelloBirdie", header_text)
+
+        # He is invited to enter a bird name
+        inputbox = self.browser.find_element(By.ID, "id_bird_to_check")
+        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a bird name")
+
+        # He types "sparrow" into the text box
+        inputbox.send_keys("sparrow")
+
+        # When he hits enter, the page updates with the name of the bird he's searching for:
+        # "Looking for 'sparrow' in this area..."
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        confirmation_text = self.browser.find_element(By.ID, "id_confirmation_text")
+        self.assertEqual(confirmation_text.text, "Looking for 'sparrow' in this area...", )
 
         # He gets a popup asking if the website can know his location
         # and clicks "allow."
