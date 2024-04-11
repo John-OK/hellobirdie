@@ -4,9 +4,12 @@
     </head>
     <body>
         <h1>Welcome to HelloBirdie!</h1>
-        <input id="id_bird_to_check" placeholder="Enter a bird name" />
+        <form method="POST">
+            <input name="bird_name" id="id_bird_to_check" placeholder="Enter a bird name" />
+            {% csrf_token %}
+        </form>
         <h3 id="id_confirmation_text">
-            Looking for 'sparrow' in this area...
+            Looking for '{{ new_bird_name }}' in this area...
         </h3>
     </body>
 </html>
