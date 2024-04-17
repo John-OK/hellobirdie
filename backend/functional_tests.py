@@ -18,9 +18,9 @@ class NewVisitorTest(unittest.TestCase):
         self.browser.get("http://localhost:8000")
 
         # He confirms he's at the right webpage from the page title and header
-        self.assertIn("HelloBirdie", self.browser.title)
+        self.assertIn("hellobirdie", self.browser.title)
         header_text = self.browser.find_element(By.TAG_NAME, "h1").text
-        self.assertIn("HelloBirdie", header_text)
+        self.assertIn("hellobirdie", header_text)
 
         # He is invited to enter a bird name
         inputbox = self.browser.find_element(By.ID, "id_bird_to_check")
