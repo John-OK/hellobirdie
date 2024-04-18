@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.http import HttpRequest
-from pages.views import homepage
+from pages.views import home_page
 
 class HomePageTest(TestCase):
-    def test_can_serve_the_homepage(self):
+    def test_can_serve_the_home_page(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
 

@@ -14,7 +14,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_search_for_a_species(self):
         # David sees a bird that he thinks is a white-crowned sparrow,
         # but wants to be sure.
-        # He goes to the hellobirdie homepage.
+        # He goes to the hellobirdie home page.
         self.browser.get("http://localhost:8000")
 
         # He confirms he's at the right webpage from the page title and header
