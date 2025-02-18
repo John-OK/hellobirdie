@@ -56,8 +56,8 @@ migrations/*.py
 .env.test.local
 .env.production.local
 
-# Local Files
- .local_user_files/
+# Local user files
+.local_user_files/
 
 # windsurf rules
 .windsurfrules
