@@ -4,6 +4,6 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "latest"
   }
 }
