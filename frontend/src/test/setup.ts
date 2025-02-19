@@ -1,9 +1,9 @@
-import '@testing-library/jest-dom';
-import { afterEach } from 'vitest';
+import { expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import * as matchers from '@testing-library/jest-dom/matchers';
+import '@testing-library/jest-dom';
 
-// Establish API mocking before all tests
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+expect.extend(matchers);
 
 // Clean up after each test
 afterEach(() => {
