@@ -4,6 +4,25 @@
 
 ### Required Software
 
+- Docker Desktop 4.38.0 or Docker Engine 28.0.0
+  > Latest stable versions with enhanced security and performance features
+- Docker Compose 2.33.0
+  > Latest stable version with improved compose spec support
+- Node.js 22.14.0 (LTS)
+  > Latest Long Term Support version for optimal stability and security
+- Git
+- Any modern IDE (e.g., VS Code, PyCharm, Sublime)
+- Postman or Insomnia for API testing (optional)
+
+> Note: While Docker will handle Python, Node.js, and PostgreSQL, having these installed locally can be helpful for development:
+> - Node.js 20.x
+> - Python 3.13
+> - PostgreSQL 17
+
+## Prerequisites
+
+### Required Software
+
 - Node.js 20.x
 - Python 3.13
 - PostgreSQL 17
@@ -26,45 +45,21 @@ cd hellobirdie
 
 ### 2. Backend Setup
 
-#### Python Environment
+#### Docker Configuration
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Unix
-# or
-.\venv\Scripts\activate  # Windows
+# Build and start containers
+docker-compose up --build -d
+
+# View logs
+docker-compose logs -f
 ```
 
-#### Dependencies
-
-```bash
-pip install -r requirements.txt
-
-# Install development tools
-pip install black  # Python formatter
-```
-
-#### Database
-
-```bash
-# PostgreSQL Setup
-psql -U postgres
-```
-
-```sql
--- Run these commands in psql
-CREATE DATABASE hellobirdie_dev;
-CREATE USER hellobirdie_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE hellobirdie_dev TO hellobirdie_user;
-```
-
-#### Django Setup
-
-```bash
-python manage.py migrate  # Apply database migrations
-python manage.py createsuperuser  # Create admin user
-```
+The docker-compose.yml file sets up:
+- Python 3.13 environment
+- PostgreSQL 17 database
+- Development server
+- Test environment
 
 #### Environment Variables
 
@@ -75,21 +70,62 @@ cp .env.example .env
 Required variables in `.env`:
 
 ```plaintext
+# Docker Compose Settings
+COMPOSE_PROJECT_NAME=hellobirdie
+
 # Database
 DB_NAME=hellobirdie_dev
 DB_USER=hellobirdie_user
-DB_PASSWORD=your_password
-DB_HOST=localhost
+DB_PASSWORD=your_secure_password
+DB_HOST=db  # Points to Docker service
 DB_PORT=5432
+
+# Django
+DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
+DJANGO_SECRET_KEY=generate_a_secure_key
+DEBUG=True  # Set to False in production
 
 # APIs (add keys when obtained)
 XENO_CANTO_API_KEY=your_key_here
 MAP_TILES_API_KEY=your_key_here  # If using commercial map tiles
 GEOLOCATION_API_KEY=your_key_here  # Optional
+```
 
-# Security
-DJANGO_SECRET_KEY=generate_a_secure_key
-DEBUG=True  # Set to False in production
+#### Development Tools
+
+The Docker setup includes:
+- pytest for testing
+- black for code formatting
+- isort for import sorting
+- flake8 for linting
+
+Run tools through Docker:
+```bash
+# Run tests
+docker-compose exec backend pytest
+
+# Format code
+docker-compose exec backend black .
+docker-compose exec backend isort .
+
+# Run linting
+docker-compose exec backend flake8
+```
+
+#### Database Management
+
+The database is automatically:
+- Created by Docker Compose
+- Configured for Django
+- Migrated during container startup
+
+Access database:
+```bash
+# Using Docker
+docker-compose exec db psql -U hellobirdie_user -d hellobirdie_dev
+
+# Or using local PostgreSQL client
+psql -h localhost -p 5432 -U hellobirdie_user -d hellobirdie_dev
 ```
 
 ### 3. Frontend Setup

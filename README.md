@@ -1,8 +1,8 @@
 # HelloBirdie
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
+[![Python](https://img.shields.io/badge/Python-3.13-blue)](https://www.python.org/)
 
 A web application for visualizing bird locations from the xeno-canto database, with a focus on user privacy and clean code.
 
@@ -10,45 +10,47 @@ A web application for visualizing bird locations from the xeno-canto database, w
 
 1. Prerequisites:
 
-   - Node.js 20.x
-   - Python 3.13
-   - PostgreSQL 17
+   - Docker Desktop 4.38.0 or Docker Engine 28.0.0
+   - Docker Compose 2.33.0
+   - Node.js 22.14.0 (LTS)
    - Git
+
+   Optional for local development:
+   - Node.js 22.x (for frontend development)
+   - Python 3.13 (for backend development)
+   - PostgreSQL 17 (for database management)
 
 2. Installation:
 
    ```bash
    # Clone the repository
    git clone [repository-url]
-
-   # Backend setup
-   cd hellobirdie/backend
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-
-   # Frontend setup
-   cd ../frontend
-   npm install
+   cd hellobirdie
    ```
 
 3. Configuration:
 
-   - Copy `.env.example` to `.env` in both frontend and backend directories
-   - Set up your PostgreSQL database
-   - Configure your xeno-canto API credentials
+   ```bash
+   # Copy environment files
+   cp .env.example .env
+   ```
 
-4. Run the application:
+4. Start the Application:
 
    ```bash
-   # Backend
-   cd backend
-   python manage.py runserver
+   # Start backend services (Docker)
+   docker-compose up -d
 
-   # Frontend (new terminal)
+   # Start frontend development server
    cd frontend
+   npm install
    npm run dev
    ```
+
+   The application will be available at:
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:8000
+   - Admin Interface: http://localhost:8000/admin
 
 ## Contributing
 
@@ -68,7 +70,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## Tech Stack
 
-- **Backend**: Python 3.13, Django 5.1, PostgreSQL 17.3
+- **Backend**: Python 3.13, Django 5.1, PostgreSQL 17.4
 - **Frontend**: TypeScript 5.7, React 18, Vite 6.1
 - **Libraries**: Axios 1.7, Leaflet 1.9, TailwindCSS 4.0
 - **Testing**: Pytest, Vitest, React Testing Library
