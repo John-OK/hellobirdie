@@ -1,0 +1,23 @@
+{
+  "recommendations": [
+    // Python
+    "ms-python.python", // Python language support
+    "ms-python.vscode-pylance", // Python type checking and language server
+    "ms-python.black-formatter", // Python code formatting
+    
+    // TypeScript/JavaScript
+    "dbaeumer.vscode-eslint", // JavaScript/TypeScript linting
+    "esbenp.prettier-vscode", // Code formatting
+    
+    // Docker
+    "ms-azuretools.vscode-docker", // Docker support
+    
+    // Git
+    "eamodio.gitlens", // Enhanced Git capabilities
+    
+    // General
+    "streetsidesoftware.code-spell-checker", // Spell checking
+    "editorconfig.editorconfig", // EditorConfig support
+    "mikestead.dotenv" // .env file support
+  ]
+}
