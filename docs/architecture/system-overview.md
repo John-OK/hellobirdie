@@ -24,10 +24,22 @@ HelloBirdie is a web application that visualizes bird sighting data from the xen
 
 - Django 5.1 + Python 3.13
 - PostgreSQL 17
+- Docker containerization
 - Key features:
   - REST API endpoints
   - xeno-canto API integration
   - Data caching
+  - Health check monitoring
+
+### Testing Infrastructure
+
+- pytest for Python testing
+  - Unit tests
+  - Integration tests
+  - API tests
+- Django test client
+- Factory Boy for test data
+- Coverage reporting
 
 ## Core Components
 
@@ -45,10 +57,11 @@ HelloBirdie is a web application that visualizes bird sighting data from the xen
 
 ### System Architecture and Data Flow
 
-The application follows a client-server architecture with external service integration:
+The application follows a containerized client-server architecture with external service integration:
 
 ```
-[Frontend] <-> [Backend API] <-> [xeno-canto API]
+[Frontend Container] <-> [Backend Container] <-> [xeno-canto API]
+                         [Database Container]
    ^                ^              ^
    |                |              |
 [Map Data]    [PostgreSQL DB]   [Audio Files]

@@ -24,25 +24,69 @@
 5. Address review feedback
 6. Merge after approval
 
+### Development Environment
+
+We use Docker for development to ensure consistency:
+
+```bash
+# Start the development environment
+docker-compose up -d
+
+# Run tests
+docker-compose exec backend pytest
+
+# Format code
+docker-compose exec backend black .
+docker-compose exec backend isort .
+```
+
+See our [Docker Guide](docs/setup/docker-guide.md) for detailed instructions.
+
 ### Code Review Guidelines
 
-- Tests must pass and coverage maintained
-- Code must follow project style
-- Documentation must be updated
-- No security vulnerabilities
-- Mobile-friendly implementation
-- Error handling must be implemented
-- Performance considerations addressed
+1. Testing:
+   - Tests must be written first (TDD)
+   - All tests must pass
+   - Coverage must be maintained
+   - Integration tests for API endpoints
+
+2. Code Quality:
+   - Follow project style guide
+   - Documentation must be updated
+   - No security vulnerabilities
+   - Mobile-friendly implementation
+   - Proper error handling
+   - Performance considerations
+
+3. Docker:
+   - Changes to Dockerfile or docker-compose.yml must be documented
+   - Container builds must succeed
+   - New dependencies must be properly versioned
 
 ## Code Standards
 
 ### General Principles
 
 - Privacy and user respect are paramount
-- Test-driven development
+- Test-driven development (TDD)
+  - Write tests before implementation
+  - Use pytest for backend testing
+  - Maintain test coverage
 - Clean, maintainable code
+  - Follow SOLID principles
+  - Use type hints in Python
+  - Document complex logic
 - Security by design
+  - Follow security best practices
+  - Validate all inputs
+  - Use environment variables for secrets
 - Mobile-first approach
+  - Responsive design
+  - Touch-friendly interfaces
+- Docker-based development
+  - Use containers for consistency
+  - Document container changes
+  - Follow Docker best practices
 
 ### IDE Configuration
 
