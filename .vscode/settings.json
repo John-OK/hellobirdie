@@ -1,6 +1,7 @@
 {
   // Python settings
-  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+  // TODO: Update this to use backend/.venv/bin/python once we create the virtual environment
+  "python.defaultInterpreterPath": "/home/john/.pyenv/shims/python3",
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
