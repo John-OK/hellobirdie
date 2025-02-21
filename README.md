@@ -3,8 +3,10 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.13-blue)](https://www.python.org/)
+[![Backend Coverage](https://img.shields.io/badge/backend_coverage-100%25-brightgreen.svg)](https://github.com/John-OK/hellobirdie/actions)
+[![Frontend Coverage](https://img.shields.io/badge/frontend_coverage-100%25-brightgreen.svg)](https://github.com/John-OK/hellobirdie/actions)
 
-A web application for visualizing bird locations from the xeno-canto database, with a focus on user privacy and clean code.
+A modern, type-safe web application for visualizing bird locations from the xeno-canto database. Built with TypeScript and Python, following Test-Driven Development principles and focusing on code quality and user privacy.
 
 ## Quick Start
 

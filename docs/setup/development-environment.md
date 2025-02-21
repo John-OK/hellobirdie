@@ -11,28 +11,60 @@
 - Node.js 22.14.0 (LTS)
   > Latest Long Term Support version for optimal stability and security
 - Git
-- Any modern IDE (e.g., VS Code, PyCharm, Sublime)
-- Postman or Insomnia for API testing (optional)
-
-> Note: While Docker will handle Python, Node.js, and PostgreSQL, having these installed locally can be helpful for development:
-> - Node.js 20.x
-> - Python 3.13
-> - PostgreSQL 17
-
-## Prerequisites
-
-### Required Software
-
-- Node.js 20.x
-- Python 3.13
-- PostgreSQL 17
-- Git
 
 ### Recommended Tools
 
-- Any modern IDE (e.g., VS Code, PyCharm, Sublime)
+- Modern IDE (VS Code recommended for TypeScript/Python integration)
 - pgAdmin or DBeaver for database management
 - Postman or Insomnia for API testing
+
+> Note: While Docker handles the runtime environment, local installations can enhance development:
+> - Node.js 22.x (TypeScript development)
+> - Python 3.13 (backend development)
+> - PostgreSQL 17 (database management)
+
+## TypeScript Development Setup
+
+### IDE Configuration
+
+Required VS Code extensions:
+- TypeScript + JavaScript Language Features (built-in)
+- ESLint (dbaeumer.vscode-eslint)
+- Prettier (esbenp.prettier-vscode)
+
+Recommended settings:
+```json
+{
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.completeFunctionCalls": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative"
+}
+```
+
+### TypeScript Configuration
+
+Our `tsconfig.json` enforces:
+- Strict type checking
+- No implicit any
+- Strict null checks
+- Explicit function return types
+
+### Development Standards
+
+1. Type Safety
+   - All components must have explicit type definitions
+   - Use TypeScript utility types where appropriate
+   - Implement proper error boundaries with type checking
+
+2. Component Architecture
+   - Follow presentational/container pattern
+   - Implement proper prop interfaces
+   - Use typed custom hooks for shared logic
+
+3. Performance Considerations
+   - Implement proper memoization
+   - Use type-safe context providers
+   - Follow React performance best practices
 
 ## Initial Setup
 
