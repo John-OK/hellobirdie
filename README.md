@@ -26,7 +26,7 @@ A modern, type-safe web application for visualizing bird locations from the xeno
 
    ```bash
    # Clone the repository
-   git clone [repository-url]
+   git clone https://github.com/John-OK/hellobirdie.git
    cd hellobirdie
    ```
 
@@ -94,4 +94,3 @@ In summary, this license:
 - Prevents commercial use without explicit permission
 - Requires attribution to the original author
 
-<!-- TODO: Review missing items in DOCUMENTATION_TODO.md -->

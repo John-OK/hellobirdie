@@ -19,6 +19,7 @@
 - Postman or Insomnia for API testing
 
 > Note: While Docker handles the runtime environment, local installations can enhance development:
+>
 > - Node.js 22.x (TypeScript development)
 > - Python 3.13 (backend development)
 > - PostgreSQL 17 (database management)
@@ -28,11 +29,13 @@
 ### IDE Configuration
 
 Required VS Code extensions:
+
 - TypeScript + JavaScript Language Features (built-in)
 - ESLint (dbaeumer.vscode-eslint)
 - Prettier (esbenp.prettier-vscode)
 
 Recommended settings:
+
 ```json
 {
   "typescript.updateImportsOnFileMove.enabled": "always",
@@ -44,6 +47,7 @@ Recommended settings:
 ### TypeScript Configuration
 
 Our `tsconfig.json` enforces:
+
 - Strict type checking
 - No implicit any
 - Strict null checks
@@ -52,11 +56,13 @@ Our `tsconfig.json` enforces:
 ### Development Standards
 
 1. Type Safety
+
    - All components must have explicit type definitions
    - Use TypeScript utility types where appropriate
    - Implement proper error boundaries with type checking
 
 2. Component Architecture
+
    - Follow presentational/container pattern
    - Implement proper prop interfaces
    - Use typed custom hooks for shared logic
@@ -71,7 +77,7 @@ Our `tsconfig.json` enforces:
 ### 1. Clone Repository
 
 ```bash
-git clone [repository-url]
+git clone https://github.com/John-OK/hellobirdie.git
 cd hellobirdie
 ```
 
@@ -88,6 +94,7 @@ docker-compose logs -f
 ```
 
 The docker-compose.yml file sets up:
+
 - Python 3.13 environment
 - PostgreSQL 17 database
 - Development server
@@ -126,12 +133,14 @@ GEOLOCATION_API_KEY=your_key_here  # Optional
 #### Development Tools
 
 The Docker setup includes:
+
 - pytest for testing
 - black for code formatting
 - isort for import sorting
 - flake8 for linting
 
 Run tools through Docker:
+
 ```bash
 # Run tests
 docker-compose exec backend pytest
@@ -147,11 +156,13 @@ docker-compose exec backend flake8
 #### Database Management
 
 The database is automatically:
+
 - Created by Docker Compose
 - Configured for Django
 - Migrated during container startup
 
 Access database:
+
 ```bash
 # Using Docker
 docker-compose exec db psql -U hellobirdie_user -d hellobirdie_dev
