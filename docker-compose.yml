@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_DB=hellobirdie
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  postgres_data:
