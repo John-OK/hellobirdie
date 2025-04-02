@@ -292,7 +292,7 @@ npm test
 
 ## Additional Resources
 
-- [System Overview](/docs/architecture/system-overview.md)
+- [System Overview](/docs/project/architecture/system-overview.md)
 - [Contributing Guidelines](/CONTRIBUTING.md)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [Django Documentation](https://docs.djangoproject.com/)

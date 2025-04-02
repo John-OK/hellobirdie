@@ -28,6 +28,7 @@ OR
    - Docker Compose 2.33.0
 
 Additional Requirements:
+
 - Node.js 22.14.0 (LTS)
 
 > Note: Version numbers are explicit to ensure consistent behavior across development environments. These versions provide features we rely on, such as BuildKit and enhanced compose file syntax.
@@ -278,7 +279,7 @@ sudo docker-compose up
 ## Next Steps
 
 1. Review the [Development Environment Setup](development-environment.md) guide
-2. Explore the [Backend Setup Guides](backend-setup-guides.md)
+2. Explore the [Backend Setup Guide](../hybrid-backend-setup-guide.md)
 3. Set up your local environment following these guides
 
 ## Additional Resources
