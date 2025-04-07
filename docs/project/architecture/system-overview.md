@@ -124,7 +124,7 @@ This diagram shows:
 
 ## Related Documentation
 
-- [Development Environment Setup](/docs/setup/development-environment.md)
+- [Development Environment Setup](/docs/backend/setup/guides/development-environment.md)
 - [Contributing Guidelines](/CONTRIBUTING.md)
 
 > Note: This overview will evolve as the project develops. Key decisions and architectural changes will be documented here.

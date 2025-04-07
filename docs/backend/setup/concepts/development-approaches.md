@@ -55,14 +55,16 @@ python manage.py runserver
 
 ```bash
 # Start all services
-docker-compose up
+docker compose up
 
 # Run a command in the container
-docker-compose exec backend python manage.py test
+docker compose exec backend python manage.py test
 
 # Rebuild after dependency changes
-docker-compose build
+docker compose build
 ```
+
+> **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
 
 ## TDD Workflow in Hybrid Environment
 

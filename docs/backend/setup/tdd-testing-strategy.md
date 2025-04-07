@@ -68,14 +68,16 @@ backend/
 
 ```bash
 # Run all tests in Docker
-docker-compose exec backend pytest
+docker compose exec backend pytest
 
 # Run specific tests
-docker-compose exec backend pytest api/tests/test_models.py
+docker compose exec backend pytest api/tests/test_models.py
 
 # Run with coverage
-docker-compose exec backend pytest --cov=api
+docker compose exec backend pytest --cov=api
 ```
+
+> **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
 
 ## Split Settings and TDD
 

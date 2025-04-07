@@ -6,14 +6,22 @@ This directory contains documentation specific to the HelloBirdie backend implem
 
 - **[setup/](./setup/)** - Backend setup and configuration guides
 
-  - Detailed instructions for setting up the Django backend
-  - Test-Driven Development (TDD) approach
-  - PostgreSQL database configuration
+  - [hybrid-backend-setup-guide.md](./setup/hybrid-backend-setup-guide.md) - Main setup guide
+  - [details/](./setup/details/) - Step-by-step setup instructions
+  - [guides/](./setup/guides/) - Supplementary backend guides
+  - [concepts/](./setup/concepts/) - Backend concepts and patterns
+  - [tdd-testing-strategy.md](./setup/tdd-testing-strategy.md) - Test-Driven Development approach
 
 - **[api/](./api/)** - API documentation
-  - Endpoint specifications
+  - [endpoints.md](./api/endpoints.md) - API endpoint specifications
   - Request/response formats
   - Authentication details
+
+## Navigation
+
+- [← Documentation Home](../README.md)
+- [Project-Wide Documentation](../project/README.md)
+- [Frontend Documentation](../frontend/README.md)
 
 ## Technology Stack
 

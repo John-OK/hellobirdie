@@ -1,18 +1,24 @@
-# Django Settings Structure
+# Settings Structure Refactoring
+
+This guide provides detailed instructions for refactoring the Django settings structure to follow best practices. This corresponds to **Step 5** in the [Hybrid Backend Setup Guide](../hybrid-backend-setup-guide.md).
+
+## Overview
+
+In Step 2 (Environment Configuration), we created a minimal settings structure to support Docker testing. Now we'll enhance and properly organize this structure following best practices.
 
 ## Split Settings Approach
 
-For the HelloBirdie project, we're using a split settings approach with three main files. This approach follows the REFACTOR phase of our TDD cycle, as referenced in [Step 5 of the Hybrid Backend Setup Guide](../hybrid-backend-setup-guide.md), improving our project organization while maintaining functionality.
+For the HelloBirdie project, we're using a split settings approach with three main files. This approach follows the REFACTOR phase of our TDD cycle, improving project organization while maintaining functionality.
 
 ```
 settings/
-├── __init__.py  # Settings loader
+├── __init__.py  # Settings loader (already created in Step 2)
 ├── base.py      # Common settings
-├── local.py     # Development settings
+├── local.py     # Development settings (enhance the minimal version from Step 2)
 └── test.py      # Test-specific settings
 ```
 
-## Benefits for Learning
+## Benefits
 
 ### 1. Clear Separation of Concerns
 
@@ -40,7 +46,9 @@ settings/
 
 ## Implementation Steps
 
-### 1. Create Settings Directory Structure
+### 1. Enhance the Minimal Settings Structure
+
+The directory structure should already exist from Step 2. If not, create it with:
 
 ```bash
 # From the backend directory
@@ -50,7 +58,7 @@ touch hellobirdie/settings/__init__.py
 
 ### 2. Create Base Settings (base.py)
 
-Copy the core settings from your existing `settings.py` file to a new `base.py` file:
+Create a file named `base.py` in the `backend/hellobirdie/settings/` directory with the following content (copied from the core settings in your existing `settings.py` file):
 
 ```python
 # hellobirdie/settings/base.py
@@ -71,6 +79,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Local apps
     'api',
 ]
 
@@ -125,9 +135,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ```
 
-### 3. Create Local Settings (local.py)
+### 3. Enhance Local Settings (local.py)
 
-Create development-specific settings:
+Enhance the minimal `local.py` file created in Step 2 with more complete development-specific settings:
 
 ```python
 # hellobirdie/settings/local.py
@@ -155,109 +165,105 @@ DATABASES = {
 
 ### 4. Create Test Settings (test.py)
 
-Create test-specific settings for faster test execution:
+Create a file named `test.py` in the `backend/hellobirdie/settings/` directory with the following content:
 
 ```python
 # hellobirdie/settings/test.py
-import os
 from .base import *
 
 DEBUG = False
 
-# Use a dedicated PostgreSQL database for tests
+# Use PostgreSQL for tests to match production
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_TEST_DB', 'test_hellobirdie'),
+        'NAME': os.environ.get('POSTGRES_DB', 'test_hellobirdie'),
         'USER': os.environ.get('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-        'TEST': {
-            'NAME': 'test_hellobirdie',
-        },
     }
 }
 
-# Use faster password hasher for testing
+# Faster password hashing for tests
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
 
-# Disable non-critical middleware for faster tests
-MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-]
+# Disable logging during tests
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+}
 ```
 
 ### 5. Create Settings Loader (**init**.py)
 
-Set up the settings loader to select the appropriate settings file based on environment variables:
+Update the `__init__.py` file in `backend/hellobirdie/settings/` to load the appropriate settings based on the environment:
 
 ```python
 # hellobirdie/settings/__init__.py
 import os
 
-# Default to local settings
+# Default to local settings if DJANGO_ENV is not set
 env = os.environ.get('DJANGO_ENV', 'local')
 
-if env == 'test':
+if env == 'production':
+    from .production import *
+elif env == 'test':
     from .test import *
-elif env == 'production':
-    from .production import *  # We'll create this later
-else:  # 'local' or any other value
+else:
     from .local import *
 ```
 
 ### 6. Update WSGI and ASGI Configuration
 
-Update the WSGI and ASGI configuration files to use the new settings module:
+Update `wsgi.py` and `asgi.py` to use the new settings module:
 
 ```python
 # hellobirdie/wsgi.py
+import os
+from django.core.wsgi import get_wsgi_application
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hellobirdie.settings')
+application = get_wsgi_application()
 ```
-
-### 7. Update manage.py
-
-Update manage.py to use the new settings module:
 
 ```python
-# manage.py
+# hellobirdie/asgi.py
+import os
+from django.core.asgi import get_asgi_application
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hellobirdie.settings')
+application = get_asgi_application()
 ```
 
-## Environment Variables
+### 7. Create .env File
 
-Key environment variables for settings:
+Create a `.env` file in the `backend` directory to store environment variables:
 
-- `DJANGO_ENV`: Determines which settings file to use ('local', 'test', 'production')
-- `DJANGO_SECRET_KEY`: Secret key for security
-- `DJANGO_DEBUG`: Override debug mode flag
-- `DATABASE_URL`: Database connection string (for production)
+```
+DJANGO_ENV=local
+DJANGO_SECRET_KEY=your-secret-key-here
+POSTGRES_DB=hellobirdie
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+```
 
-## Testing the Settings Structure
+### 8. Test the Refactored Settings
 
-After implementing the split settings structure, run the tests to ensure everything still works:
+Run tests to ensure the refactoring didn't break functionality:
 
 ```bash
-# Run with default settings (local)
+# Run tests with local settings
 python manage.py test api.tests.test_health
 
-# Run with test settings
+# Run tests with test settings
 DJANGO_ENV=test python manage.py test api.tests.test_health
 ```
 
-## Common Issues and Solutions
+## Next Steps
 
-1. **Import Errors**: If you encounter import errors, check that your relative imports use the correct paths after restructuring.
-
-2. **Path Issues**: The `BASE_DIR` path needs to be adjusted since settings.py is now in a subdirectory.
-
-3. **Environment Variables**: Ensure environment variables are properly set before running Django commands.
-
-4. **Missing Settings**: If you split settings but forgot to move some values, Django will raise exceptions about missing settings.
+After completing the settings structure refactoring, proceed to [Step 6: Database Configuration and Initial Migrations](./step6-database-configuration.md) to set up the database.

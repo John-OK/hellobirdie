@@ -1,19 +1,46 @@
 # HelloBirdie Backend Setup Documentation
 
-This directory contains all documentation related to setting up and developing the HelloBirdie backend.
+## For New Team Members
 
-## Getting Started
+If you're new to the project, you likely won't need to follow the entire setup process from scratch. Instead:
 
-**New team members should start here:**
+1. Clone the existing repository
+2. Follow the [Development Environment Setup](../../project/development-environment.md) guide
+3. Use these documents as a reference to understand the backend architecture
 
-1. [Hybrid Backend Setup Guide](./hybrid-backend-setup-guide.md) - The main step-by-step guide for setting up the backend
-2. [TDD Testing Strategy](./tdd-testing-strategy.md) - Our approach to Test-Driven Development
+## Purpose of This Documentation
 
-## Directory Structure
+This directory contains documentation that serves as:
+
+- A historical record of how the backend was built
+- A reference for understanding the backend architecture
+- A guide for rebuilding the backend if necessary
+- A learning resource for Django and TDD practices
+
+## Contents
+
+- [hybrid-backend-setup-guide.md](./hybrid-backend-setup-guide.md) - The main step-by-step guide for setting up the backend
+- [tdd-testing-strategy.md](./tdd-testing-strategy.md) - Our approach to Test-Driven Development
 
 - **[details/](./details/)** - Detailed implementation guides for each setup step
+
+  - [step1-project-structure-setup.md](./details/step1-project-structure-setup.md) - Initial project structure
+  - [step2-environment-configuration.md](./details/step2-environment-configuration.md) - Environment variables and configuration
+  - [step3-django-project-initialization.md](./details/step3-django-project-initialization.md) - Django setup
+  - [step4-implementing-first-feature.md](./details/step4-implementing-first-feature.md) - First feature with TDD
+  - [step5-settings-structure-refactoring.md](./details/step5-settings-structure-refactoring.md) - Settings refactoring
+  - [step6-database-configuration.md](./details/step6-database-configuration.md) - Database setup
+
 - **[concepts/](./concepts/)** - Conceptual documentation explaining our development approach
+
 - **[guides/](./guides/)** - Additional guides for specific tools and workflows
+  - [feature-setup-guide.md](./guides/feature-setup-guide.md) - Process for implementing new features following TDD
+
+## Navigation
+
+- [← Backend Documentation](../README.md)
+- [Project-Wide Documentation](../../project/README.md)
+- [Documentation Home](../../README.md)
 
 ## Development Philosophy
 

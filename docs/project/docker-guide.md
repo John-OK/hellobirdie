@@ -94,7 +94,7 @@ We use Docker to ensure:
 
 ## Key Files and Their Purposes
 
-### 1. docker-compose.yml
+### 1. Docker Compose Configuration
 
 ```yaml
 version: "3.8"
@@ -155,44 +155,46 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 ```bash
 # Build and start all containers
-docker-compose up --build -d
+docker compose up --build -d
 
 # View container logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop all containers
-docker-compose down
+docker compose down
 ```
+
+> **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
 
 ### Working with Containers
 
 ```bash
 # Run Django management commands
-docker-compose exec backend python manage.py migrate
-docker-compose exec backend python manage.py createsuperuser
+docker compose exec backend python manage.py migrate
+docker compose exec backend python manage.py createsuperuser
 
 # Access PostgreSQL
-docker-compose exec db psql -U user -d hellobirdie
+docker compose exec db psql -U user -d hellobirdie
 
 # View container status
-docker-compose ps
+docker compose ps
 ```
 
 ### Development Workflow
 
 ```bash
 # Start backend services
-docker-compose up -d
+docker compose up -d
 
 # Start frontend development server (locally)
 cd frontend
 npm run dev
 
 # Run backend tests
-docker-compose exec backend pytest
+docker compose exec backend pytest
 
 # Format backend code
-docker-compose exec backend black .
+docker compose exec backend black .
 ```
 
 ## Data Persistence
@@ -225,7 +227,7 @@ If you see "port is already allocated" errors:
 sudo lsof -i :8000  # For backend port
 sudo lsof -i :5432  # For database port
 
-# Stop the conflicting process or change the port in docker-compose.yml
+# Stop the conflicting process or change the port in Docker Compose configuration
 ```
 
 ### 2. Database Connection Issues
@@ -234,13 +236,13 @@ If the backend can't connect to the database:
 
 ```bash
 # Ensure database container is running
-docker-compose ps
+docker compose ps
 
 # Check database logs
-docker-compose logs db
+docker compose logs db
 
 # Verify environment variables
-docker-compose exec backend env | grep DATABASE
+docker compose exec backend env | grep DATABASE
 ```
 
 ### 3. Volume Permission Issues
@@ -252,25 +254,25 @@ If you encounter permission errors:
 sudo chown -R $USER:$USER .
 
 # Or run Docker commands with sudo
-sudo docker-compose up
+sudo docker compose up
 ```
 
 ## Best Practices
 
-1. **Always use docker-compose up -d**
+1. **Always use docker compose up -d**
 
    - Starts containers in detached mode
    - Keeps your terminal free for other commands
 
 2. **Check logs when troubleshooting**
 
-   - Use `docker-compose logs -f [service]`
+   - Use `docker compose logs -f [service]`
    - Helps identify issues quickly
 
 3. **Clean up regularly**
 
-   - Remove unused containers: `docker-compose down`
-   - Clean volumes when needed: `docker-compose down -v`
+   - Remove unused containers: `docker compose down`
+   - Clean volumes when needed: `docker compose down -v`
 
 4. **Use volume mounts for development**
    - Enables live code changes

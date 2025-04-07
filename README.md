@@ -18,6 +18,7 @@ A modern, type-safe web application for visualizing bird locations from the xeno
    - Git
 
    Optional for local development:
+
    - Node.js 22.x (for frontend development)
    - Python 3.13 (for backend development)
    - PostgreSQL 17 (for database management)
@@ -50,6 +51,7 @@ A modern, type-safe web application for visualizing bird locations from the xeno
    ```
 
    The application will be available at:
+
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:8000
    - Admin Interface: http://localhost:8000/admin
@@ -65,10 +67,13 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## Documentation
 
-- [Project Architecture](/docs/architecture/system-overview.md)
-- [Development Guide](/docs/setup/development-environment.md)
-- [API Documentation](/docs/api/endpoints.md)
+- [Project Architecture](/docs/project/architecture/system-overview.md)
+- [Development Guide](/docs/project/development-environment.md)
+- [Docker Guide](/docs/project/docker-guide.md)
+- [API Documentation](/docs/backend/api/endpoints.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
+
+For more detailed documentation, see the [Documentation Overview](/docs/README.md).
 
 ## Tech Stack
 
@@ -93,4 +98,3 @@ In summary, this license:
 - Requires sharing of source code for any modifications
 - Prevents commercial use without explicit permission
 - Requires attribution to the original author
-

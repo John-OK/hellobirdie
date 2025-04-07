@@ -1,20 +1,47 @@
 # Hybrid Backend Setup Guide
 
-This guide outlines the process for setting up and extending the HelloBirdie backend using a hybrid approach (local development with Docker testing), following Test-Driven Development (TDD) principles.
+## Purpose of This Guide
+
+This document serves multiple purposes:
+
+1. **For New Team Members**: If you're joining the project, you likely won't need to follow this entire guide. Instead, you should:
+
+   - Clone the existing repository
+   - Follow the [Development Environment Setup](../../project/development-environment.md) guide
+   - Review this document to understand how the backend was structured and why
+
+2. **For Reference**: This guide documents how the HelloBirdie backend was initially built and structured using a hybrid approach (local development with Docker testing).
+
+3. **For Rebuilding**: If you need to recreate the backend from scratch or understand its architecture in depth, follow the step-by-step process outlined below.
+
+4. **For Learning**: This guide demonstrates Test-Driven Development (TDD) principles applied to a Django project.
 
 ## Related Documentation
 
-- [Project Structure Setup](./details/project-structure-setup.md) - Setting up the initial project structure
-- [Environment Configuration](./details/environment-configuration.md) - Configuring requirements and Docker
-- [Django Project Initialization](./details/django-project-initialization.md) - Initializing the Django project
-- [Django Settings Structure](./details/django-settings-structure.md) - Implementing split settings approach
+### Step-by-Step Detailed Guides
+
+- [Step 1: Project Foundation](./details/step1-project-structure-setup.md) - Setting up the initial project structure
+- [Step 2: Environment Configuration](./details/step2-environment-configuration.md) - Configuring requirements and Docker
+- [Step 3: Django Project Initialization](./details/step3-django-project-initialization.md) - Initializing the Django project
+- [Step 4: Implementing First Feature with TDD](./details/step4-implementing-first-feature.md) - Implementing the health check endpoint
+- [Step 5: Settings Structure Refactoring](./details/step5-settings-structure-refactoring.md) - Implementing split settings approach
+- [Step 6: Database Configuration](./details/step6-database-configuration.md) - Setting up the database and initial migrations
+
+### Additional Resources
+
 - [TDD Testing Strategy](./tdd-testing-strategy.md) - Details our TDD approach and testing practices
+- [Feature Setup Guide](./guides/feature-setup-guide.md) - Process for implementing new features following TDD
+
+### Project-Wide Resources
+
+- [Development Environment](../../project/development-environment.md) - Detailed setup for development tools and environment
+- [Docker Guide](../../project/docker-guide.md) - Comprehensive Docker usage and configuration
 
 ## Setup Process Overview
 
 ### 1. Project Foundation
 
-Follow the [Project Structure Setup](./details/project-structure-setup.md) guide to:
+Follow the [Step 1: Project Foundation](./details/step1-project-structure-setup.md) guide to:
 
 - Create backend directory structure within existing project
 - Update .gitignore with Python and Django-specific patterns
@@ -24,48 +51,36 @@ Follow the [Project Structure Setup](./details/project-structure-setup.md) guide
 
 ### 2. Environment Configuration
 
-Follow the [Environment Configuration](./details/environment-configuration.md) guide to:
+Follow the [Step 2: Environment Configuration](./details/step2-environment-configuration.md) guide to:
 
 - Create requirements files (base.txt, local.txt, test.txt, docker.txt)
-- Set up Dockerfile for the backend
-- Configure docker-compose.yml with PostgreSQL
 - Create sample environment variables file
 - Commit Point: "Backend environment configuration"
   > Why: Complete environment setup before adding application code
 
 ### 3. Django Project Initialization
 
-Follow the [Django Project Initialization](./details/django-project-initialization.md) guide to:
+Follow the [Step 3: Django Project Initialization](./details/step3-django-project-initialization.md) guide to:
 
 - Set up virtual environment
 - Install dependencies
 - Create Django project structure
 - Create API app with tests directory
-- Commit Point: "Django project structure initialization"
-  > Why: Establishes the core Django project structure
+- Set up Docker configuration
+  - Create Dockerfile for the backend
+  - Configure Docker Compose with PostgreSQL
+  - Create minimal settings structure for Docker
+- Verify Docker setup
+- Commit Point: "Django project structure and Docker configuration"
+  > Why: Establishes the core Django project structure and containerization
 
 ### 4. Implementing First Feature with TDD
 
-Implement a health check endpoint following TDD principles:
+Implement a health check endpoint following TDD principles. For detailed implementation steps, refer to the [Step 4: Implementing First Feature with TDD](./details/step4-implementing-first-feature.md) guide.
 
 #### RED Phase
 
-- Write a test for the health check endpoint before implementing it:
-
-  ```python
-  # backend/api/tests/test_health.py
-  from django.test import TestCase
-  from django.urls import reverse
-
-  class HealthCheckTestCase(TestCase):
-      def test_health_check_returns_ok_status(self):
-          response = self.client.get(reverse('health-check'))
-          self.assertEqual(response.status_code, 200)
-          self.assertEqual(response["Content-Type"], "application/json")
-          data = response.json()
-          self.assertEqual(data, {"status": "ok"})
-  ```
-
+- Write a test for the health check endpoint before implementing it in `backend/api/tests/test_health.py`
 - Run the test and verify it fails (expected at this stage):
   ```bash
   python manage.py test api.tests.test_health
@@ -73,39 +88,8 @@ Implement a health check endpoint following TDD principles:
 
 #### GREEN Phase
 
-- Implement minimal code to make the test pass:
-
-  ```python
-  # backend/api/views.py
-  from django.http import JsonResponse
-
-  def health_check(request):
-      return JsonResponse({"status": "ok"})
-  ```
-
-- Configure URL routing:
-
-  ```python
-  # backend/api/urls.py
-  from django.urls import path
-  from . import views
-
-  urlpatterns = [
-      path('health-check/', views.health_check, name='health-check'),
-  ]
-  ```
-
-  ```python
-  # backend/hellobirdie/urls.py
-  from django.contrib import admin
-  from django.urls import path, include
-
-  urlpatterns = [
-      path('admin/', admin.site.urls),
-      path('api/', include('api.urls')),
-  ]
-  ```
-
+- Implement minimal code to make the test pass in `backend/api/views.py`
+- Configure URL routing in `backend/api/urls.py` and `backend/hellobirdie/urls.py`
 - Run the test again to verify it passes:
 
   ```bash
@@ -117,15 +101,15 @@ Implement a health check endpoint following TDD principles:
 
 ### 5. Settings Structure Refactoring (REFACTOR Phase)
 
-Follow the [Django Settings Structure](./details/django-settings-structure.md) guide to:
+Follow the [Step 5: Settings Structure Refactoring](./details/step5-settings-structure-refactoring.md) guide to properly refactor the minimal settings structure created in Step 2:
 
-- Create settings directory structure
+- Expand the settings directory structure
   ```
   hellobirdie/
   └── settings/
-      ├── __init__.py  # Settings loader
+      ├── __init__.py  # Settings loader (already created in Step 2)
       ├── base.py      # Common settings
-      ├── local.py     # Development settings
+      ├── local.py     # Development settings (enhance the minimal version from Step 2)
       └── test.py      # Test-specific settings
   ```
 - Move settings from the default settings.py to appropriate files
@@ -144,26 +128,11 @@ Follow the [Django Settings Structure](./details/django-settings-structure.md) g
 
 ### 6. Database Configuration and Initial Migrations
 
-- Configure database settings in the appropriate settings files:
-  - PostgreSQL for all environments (local.py, test.py, production.py)
-  - Use environment variables to configure database connections
-- Create initial migrations
-  ```bash
-  python manage.py makemigrations
-  python manage.py migrate
-  ```
-- Run and verify tests in both environments
+Follow the [Step 6: Database Configuration](./details/step6-database-configuration.md) guide to configure the database and create initial migrations:
 
-  ```bash
-  # Local environment
-  python manage.py test
-
-  # Docker environment
-  docker-compose up -d
-  docker-compose exec backend python manage.py test
-  docker-compose down
-  ```
-
+- Configure database settings in the appropriate settings files
+- Create and apply initial migrations
+- Test in both local and Docker environments
 - Commit Point: "Database configuration and migrations"
   > Why: Completes the basic project setup with working database
 
@@ -236,18 +205,21 @@ pytest --cov=api
 
 ```bash
 # Start services
-docker-compose up -d
+docker compose up -d
 
-# Run tests in container
-docker-compose exec backend python manage.py test
-# or with pytest
-docker-compose exec backend pytest
+# Run Django tests
+docker compose exec backend python manage.py test
 
-# Run tests with coverage
-docker-compose exec backend pytest --cov=api
+# Run pytest tests
+docker compose exec backend pytest
 
-# Stop services
-docker-compose down
+# Run with coverage
+docker compose exec backend pytest --cov=api
+
+# Shut down containers
+docker compose down
+
+> **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
 ```
 
 ## Troubleshooting

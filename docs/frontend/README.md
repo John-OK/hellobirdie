@@ -5,10 +5,16 @@ This directory contains documentation specific to the HelloBirdie frontend imple
 ## Contents
 
 - **[setup/](./setup/)** - Frontend setup and configuration guides
-
   - Installation instructions
   - Development workflow
   - Build and deployment process
+  - Testing guidelines
+
+## Navigation
+
+- [← Documentation Home](../README.md)
+- [Project-Wide Documentation](../project/README.md)
+- [Backend Documentation](../backend/README.md)
 
 ## Technology Stack
 

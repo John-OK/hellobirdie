@@ -87,13 +87,15 @@ cd hellobirdie
 
 ```bash
 # Build and start containers
-docker-compose up --build -d
+docker compose up --build -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 ```
 
-The docker-compose.yml file sets up:
+> **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
+
+The Docker Compose configuration sets up:
 
 - Python 3.13 environment
 - PostgreSQL 17 database
@@ -143,14 +145,14 @@ Run tools through Docker:
 
 ```bash
 # Run tests
-docker-compose exec backend pytest
+docker compose exec backend pytest
 
 # Format code
-docker-compose exec backend black .
-docker-compose exec backend isort .
+docker compose exec backend black .
+docker compose exec backend isort .
 
 # Run linting
-docker-compose exec backend flake8
+docker compose exec backend flake8
 ```
 
 #### Database Management
@@ -165,7 +167,7 @@ Access database:
 
 ```bash
 # Using Docker
-docker-compose exec db psql -U hellobirdie_user -d hellobirdie_dev
+docker compose exec db psql -U hellobirdie_user -d hellobirdie_dev
 
 # Or using local PostgreSQL client
 psql -h localhost -p 5432 -U hellobirdie_user -d hellobirdie_dev

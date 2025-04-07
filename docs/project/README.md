@@ -6,10 +6,27 @@ This directory contains project-wide documentation that applies to both frontend
 
 - **[architecture/](./architecture/)** - System architecture and design
 
-  - System overview
+  - [system-overview.md](./architecture/system-overview.md) - High-level system architecture
   - Component interactions
   - Data flow diagrams
   - Technology decisions
+
+- **[development-environment.md](./development-environment.md)** - Development environment setup for both frontend and backend
+
+  - Required software and tools
+  - IDE configuration
+  - Local development setup
+
+- **[docker-guide.md](./docker-guide.md)** - Comprehensive Docker usage and configuration
+  - Container architecture
+  - Common Docker commands
+  - Troubleshooting
+
+## Navigation
+
+- [← Documentation Home](../README.md)
+- [Backend Documentation](../backend/README.md)
+- [Frontend Documentation](../frontend/README.md)
 
 ## Project Overview
 

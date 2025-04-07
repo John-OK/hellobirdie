@@ -6,10 +6,12 @@ These guides are referenced from the main [Hybrid Backend Setup Guide](../hybrid
 
 ## Contents
 
-- [Project Structure Setup](./project-structure-setup.md) - Setting up the initial project structure
-- [Environment Configuration](./environment-configuration.md) - Configuring requirements and Docker
-- [Django Project Initialization](./django-project-initialization.md) - Initializing the Django project
-- [Django Settings Structure](./django-settings-structure.md) - Implementing split settings approach
+- [Step 1: Project Structure Setup](./step1-project-structure-setup.md) - Setting up the initial project structure
+- [Step 2: Environment Configuration](./step2-environment-configuration.md) - Configuring requirements and Docker
+- [Step 3: Django Project Initialization](./step3-django-project-initialization.md) - Initializing the Django project
+- [Step 4: Implementing First Feature with TDD](./step4-implementing-first-feature.md) - Implementing the health check endpoint
+- [Step 5: Settings Structure Refactoring](./step5-settings-structure-refactoring.md) - Implementing split settings approach
+- [Step 6: Database Configuration](./step6-database-configuration.md) - Setting up the database and initial migrations
 
 ## Usage
 
