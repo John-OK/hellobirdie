@@ -62,3 +62,43 @@ migrations/*.py
 
 # windsurf rules
 .windsurfrules
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+*.log
+local_settings.py
+media/
+
+# Database
+*.dump
+*.sql
+*.bak
+
+# Virtual Environment
+.venv/
+venv/
+ENV/

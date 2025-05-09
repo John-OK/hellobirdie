@@ -15,8 +15,8 @@ This file contains the core dependencies needed for both development and product
 Django==5.1.6
 djangorestframework==3.15.2
 
-# Database
-psycopg2-binary==2.9.9
+# Database - PostgreSQL adapter for Python 3.13.1
+psycopg==3.2.6  # Modern PostgreSQL adapter with Python 3.13.1 compatibility
 
 # Environment variables
 python-dotenv==1.0.0
@@ -39,6 +39,9 @@ This file contains dependencies needed for local development. Create a file name
 # Development tools
 django-debug-toolbar==4.2.0
 django-extensions==3.2.3
+
+# Database URL parsing (for flexible database configuration)
+dj-database-url==2.3.0
 
 # Code quality
 black==24.1.1
