@@ -163,8 +163,8 @@ If a `.gitignore` file already exists (likely from frontend setup), follow these
    # View what's in the existing .gitignore
    cat .gitignore
 
-   # Compare with backend patterns
-   grep -v -f .gitignore .gitignore.backend_temp
+   # View differences (variables in .gitignore.backend_temp that aren't in .gitignore)
+   grep -Fxv -f .gitignore .gitignore.backend_temp
    ```
 
 3. **Manually merge the missing patterns** into your existing `.gitignore` file, ensuring you don't duplicate entries.
