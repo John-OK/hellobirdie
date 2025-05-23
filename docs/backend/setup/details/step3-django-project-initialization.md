@@ -86,7 +86,7 @@ COPY . /app/
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "hellobirdie.wsgi:application"]
 ```
 
-> **Note**: The system dependencies (`gcc`, `postgresql-client`, and `libpq-dev`) are required for building the PostgreSQL adapter packages (`psycopg`). Without these libraries, you might encounter build errors when Docker attempts to install Python dependencies.
+> **Note**: The system dependencies (`gcc`, `postgresql-client`, and `libpq-dev`) are required for building the PostgreSQL adapter packages (`psycopg`). Without these libraries, you might encounter build errors when Docker attempts to install Python dependencies. Check with: `gcc --version`, `psql --V`, and `dpkg -s libpq-dev`. To install: `sudo apt update && sudo apt install gcc postgresql-client libpq-dev`.
 
 ### docker-compose.yml
 
@@ -266,12 +266,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hellobirdie.settings")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hellobirdie.settings.local")
 ```
 
-### 5.4 Set Up PostgreSQL Database and User
+### 5.4 PostgreSQL Setup for Local Development
 
-Before proceeding, we need to create the PostgreSQL database and user that our application will use:
+This section sets up the **local development database** as explained in the dual database configuration in [Step 2, Section 4.1](./step2-environment-configuration.md#41-understanding-the-dual-database-configuration).
+
+> **Note**: If you plan to use Docker exclusively and not run Django directly on your local machine, you can skip this section as the Docker configuration will handle database setup automatically.
 
 ```bash
 # Connect to PostgreSQL as a superuser
+# You will be prompted to enter a password. Use the password for your account on the current machine.
 sudo -u postgres psql
 
 # Inside the PostgreSQL prompt, create the user and database
@@ -285,44 +288,80 @@ GRANT ALL PRIVILEGES ON DATABASE hellobirdie TO hellobirdie_user;
 \q
 ```
 
-> **Note**: If you're using a different PostgreSQL setup (e.g., different superuser name, custom installation), adjust the commands accordingly. The important part is creating a database named `hellobirdie` and a user named `hellobirdie_user` with the password `hellobirdie_password`.
-
-### 5.5 Install Required Dependencies
-
-We need to install a few additional dependencies for our settings configuration:
-
-```bash
-# Make sure your virtual environment is activated
-pip install dj-database-url python-dotenv
-
-# Add these to requirements/local.txt
-echo "dj-database-url==2.3.0" >> requirements/local.txt
-echo "python-dotenv==1.0.0" >> requirements/local.txt
-```
+> **Important**: These credentials (`hellobirdie_user`/`hellobirdie_password`) match the `LOCAL_DATABASE_URL` in your `.env` file. They are different from the Docker database credentials (`postgres`/`postgres`) which are configured in `docker-compose.yml`.
+>
+> If you're using a different PostgreSQL setup (e.g., different superuser name, custom installation), adjust the commands accordingly, but make sure to update your `LOCAL_DATABASE_URL` environment variable to match.
 
 ## 6. Verify Docker Setup
 
-Now that you have the Django project structure and Docker configuration in place, you can verify the Docker setup:
+Now that you have the Django project structure and Docker configuration in place, let's verify the Docker setup:
+
+> **Note**: Depending on your system configuration, you might need to use `sudo` before the Docker commands (e.g., `sudo docker compose build`). This is required if your user is not part of the Docker group. To avoid using `sudo`, you can add your user to the Docker group with: `sudo usermod -aG docker $USER` and then log out and back in.
 
 ```bash
 # From project root
 docker compose build
 docker compose up -d
-docker compose ps  # Should show both services running
-docker compose logs backend  # Check for any errors
+docker compose ps
 ```
 
-> **Note**: Depending on your system configuration, you might need to use `sudo` before the Docker commands (e.g., `sudo docker compose build`). This is required if your user is not part of the Docker group. To avoid using `sudo`, you can add your user to the Docker group with: `sudo usermod -aG docker $USER` and then log out and back in.
+### Expected Docker Services
 
-To run tests in the Docker environment (once you've written tests in Step 4):
+After running the commands above, you should see two services running when you execute `docker compose ps`:
+
+```
+NAME                                 IMAGE                        SERVICE   STATUS
+hellobirdie-backend-rebuild_2-db-1   postgres:17.4                db        Up
+hellobirdie-backend-rebuild_2-1      hellobirdie-backend-rebuild  backend   Up
+```
+
+If both services are running, your Docker setup is working correctly. You can proceed to the next step.
+
+If only the database service is running, there may be an issue with the backend service. Check the logs with:
 
 ```bash
+docker compose logs backend
+```
+
+Once you've verified that both services are running correctly, stop the containers before proceeding to the next step:
+
+```bash
+docker compose down
+```
+
+### Common Docker Setup Issues
+
+1. **Missing Dependencies**: If you see errors like `ModuleNotFoundError: No module named 'package_name'`, ensure:
+
+   - The package is included in the appropriate requirements file
+   - Core dependencies used by settings files should be in `base.txt`
+   - The Dockerfile is correctly installing requirements with `RUN pip install -r requirements/docker.txt`
+
+2. **Settings Module Not Found**: If you see `ModuleNotFoundError: No module named 'hellobirdie.settings.local'`:
+
+   - Check that your `DJANGO_SETTINGS_MODULE` environment variable in `docker-compose.yml` matches your actual settings path
+   - Verify the settings directory structure is correctly set up
+
+3. **Database Connection Issues**: If you see database connection errors:
+   - Ensure the database service is running (`docker compose ps`)
+   - Check that the database environment variables in `docker-compose.yml` match your settings
+   - The `depends_on` directive ensures the database starts before the backend, but doesn't guarantee it's ready to accept connections
+
+### Docker Commands Reference
+
+Here are some useful Docker commands for working with your environment:
+
+```bash
+# View logs of the backend service
+docker compose logs backend
+
+# Run Django management commands in the container
+docker compose exec backend python manage.py [command]
+
+# Run tests (you'll implement these in Step 4)
 docker compose exec backend python manage.py test
-```
 
-When you're done, stop the Docker containers:
-
-```bash
+# Stop all containers when you're done
 docker compose down
 ```
 

@@ -21,6 +21,9 @@ psycopg==3.2.6  # Modern PostgreSQL adapter with Python 3.13.1 compatibility
 # Environment variables
 python-dotenv==1.0.0
 
+# Database URL parsing (for flexible database configuration)
+dj-database-url==2.3.0
+
 # API documentation
 drf-spectacular==0.27.0
 
@@ -39,9 +42,6 @@ This file contains dependencies needed for local development. Create a file name
 # Development tools
 django-debug-toolbar==4.2.0
 django-extensions==3.2.3
-
-# Database URL parsing (for flexible database configuration)
-dj-database-url==2.3.0
 
 # Code quality
 black==24.1.1
@@ -119,7 +119,7 @@ Before creating or modifying the .env file, check if one already exists:
 ```bash
 # From the project root
 if [ -f .env ]; then
-  echo "Warning: .env file already exists. Please merge the contents manually."
+  echo "*** Warning: .env file already exists. Please merge the contents manually. ***"
   echo "You can use the following command to see what's in the existing file:"
   echo "cat .env"
   echo "And compare with the sample:"
@@ -147,7 +147,7 @@ If you already have an .env file, follow these steps to merge in the backend var
 
    ```bash
    # View differences (variables in .env.backend_temp that aren't in .env)
-   grep -v -F -x -f .env .env.backend_temp
+   grep -Fxv -f .env .env.backend_temp
    ```
 
 3. **Manually add missing variables** to your existing .env file:
@@ -178,6 +178,30 @@ Edit the `.env` file to customize the variables based on your local development 
 | `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS` | If using different frontend URLs      | Security: Only add domains you trust                          |
 
 > **Note**: The `.env` file contains sensitive information and should never be committed to version control. The `.env.sample` file serves as a template with safe default values.
+
+### 4.1 Understanding the Dual Database Configuration
+
+The HelloBirdie project uses a dual database configuration approach to support both Docker and direct local development:
+
+#### Docker Environment
+- **Connection String**: `DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie`
+- **Credentials**: Username `postgres`, password `postgres`
+- **Host**: `db` (the Docker service name)
+- **When Used**: When running the application with `docker compose up`
+- **Why**: These are the standard credentials for the PostgreSQL Docker image
+
+#### Local Development Environment
+- **Connection String**: `LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie`
+- **Credentials**: Username `hellobirdie_user`, password `hellobirdie_password`
+- **Host**: `localhost` (your local PostgreSQL server)
+- **When Used**: When running Django directly with `python manage.py runserver`
+- **Why**: More secure than using default PostgreSQL credentials
+
+> **Important**: In Step 3, you'll set up both configurations:
+> - The Docker configuration is handled automatically by `docker-compose.yml`
+> - The local PostgreSQL setup requires manual database and user creation (Step 3, Section 5.4)
+>
+> The Django settings will detect which environment you're using and select the appropriate connection string.
 
 ### 5. Environment Variables in a Full-Stack Project
 
