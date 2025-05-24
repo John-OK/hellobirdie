@@ -184,6 +184,7 @@ Edit the `.env` file to customize the variables based on your local development 
 The HelloBirdie project uses a dual database configuration approach to support both Docker and direct local development:
 
 #### Docker Environment
+
 - **Connection String**: `DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie`
 - **Credentials**: Username `postgres`, password `postgres`
 - **Host**: `db` (the Docker service name)
@@ -191,6 +192,7 @@ The HelloBirdie project uses a dual database configuration approach to support b
 - **Why**: These are the standard credentials for the PostgreSQL Docker image
 
 #### Local Development Environment
+
 - **Connection String**: `LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie`
 - **Credentials**: Username `hellobirdie_user`, password `hellobirdie_password`
 - **Host**: `localhost` (your local PostgreSQL server)
@@ -198,12 +200,13 @@ The HelloBirdie project uses a dual database configuration approach to support b
 - **Why**: More secure than using default PostgreSQL credentials
 
 > **Important**: In Step 3, you'll set up both configurations:
+>
 > - The Docker configuration is handled automatically by `docker-compose.yml`
 > - The local PostgreSQL setup requires manual database and user creation (Step 3, Section 5.4)
 >
 > The Django settings will detect which environment you're using and select the appropriate connection string.
 
-### 5. Environment Variables in a Full-Stack Project
+### 4.2 Environment Variables in a Full-Stack Project
 
 Since HelloBirdie is a full-stack project with separate frontend and backend components, it's important to manage environment variables carefully:
 

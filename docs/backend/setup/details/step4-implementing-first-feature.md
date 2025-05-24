@@ -2,6 +2,15 @@
 
 This guide provides detailed instructions for implementing the health check endpoint using Test-Driven Development (TDD) principles. This corresponds to **Step 4** in the [Hybrid Backend Setup Guide](../hybrid-backend-setup-guide.md).
 
+## Why Start with a Health Check?
+
+A health check endpoint is an ideal first feature because:
+- It's simple to implement but provides immediate value
+- It establishes the basic API structure and testing patterns
+- It helps verify that your entire stack (Django, database, web server) is functioning correctly
+- It's a standard practice in modern API development for monitoring and reliability
+- It serves as a foundation for more complex features
+
 ## TDD Workflow Overview
 
 We'll follow the classic RED-GREEN-REFACTOR cycle:

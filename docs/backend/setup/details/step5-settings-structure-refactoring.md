@@ -238,7 +238,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hellobirdie.settings')
 application = get_asgi_application()
 ```
 
-### 7. Create .env File
+### 7. Create Backend-Specific .env File
 
 Create a `.env` file in the `backend` directory to store environment variables:
 
@@ -251,6 +251,30 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 ```
+
+> **Security Reminder**: Ensure your backend `.env` file is explicitly listed in `.gitignore` to prevent sensitive credentials from being committed to version control. The project root's `.gitignore` likely already includes a general `.env` entry, but you should verify it also covers nested `.env` files:
+>
+> ```bash
+> # Check if .gitignore covers nested .env files
+> grep -E '\.env$|backend/\.env' .gitignore
+> 
+> # If not found, add it to .gitignore
+> echo 'backend/.env' >> .gitignore
+> ```
+>
+> This step is critical because many `.gitignore` templates only exclude `.env` files in the root directory, not in subdirectories.
+
+#### Why a Backend-Specific .env File?
+
+While we already created a project-root `.env` file in Step 2, creating a backend-specific `.env` file offers several advantages:
+
+1. **Separation of Concerns**: Backend-specific variables stay with the backend code
+2. **Deployment Flexibility**: The backend can be deployed independently with its own environment
+3. **Development Isolation**: Backend developers can modify their environment without affecting frontend settings
+4. **Clearer Organization**: Variables are located closer to where they're used
+5. **Reduced Conflicts**: Minimizes merge conflicts in multi-developer environments
+
+This approach follows the principle of keeping configuration close to the code that uses it, making the project more maintainable as it grows.
 
 ### 8. Test the Refactored Settings
 

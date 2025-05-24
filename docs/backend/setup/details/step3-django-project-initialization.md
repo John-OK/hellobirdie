@@ -152,6 +152,8 @@ mkdir -p hellobirdie/settings
 
 # Create an empty __init__.py file to make it a proper package
 touch hellobirdie/settings/__init__.py
+
+> **Note on Python Packages**: The `__init__.py` file (even if empty) is what makes a directory a Python package. Without it, Python cannot import modules from that directory. This is a fundamental concept in Python's module system that applies to all package directories in your project.
 ```
 
 Create a file named `local.py` in the `backend/hellobirdie/settings/` directory with the following content:

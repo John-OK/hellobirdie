@@ -4,6 +4,16 @@ This guide walks through setting up the initial project structure for the HelloB
 
 ## Directory Structure
 
+### Why This Structure?
+
+The HelloBirdie project follows a structured approach to organizing code and documentation that provides several benefits:
+
+- **Separation of Concerns**: Clearly separating backend and frontend code makes the codebase easier to navigate and maintain
+- **Modular Organization**: Grouping related files (like requirements) into dedicated directories improves discoverability
+- **Documentation Proximity**: Keeping documentation close to the code it describes helps maintain documentation accuracy
+- **Industry Standards**: This structure follows common practices in professional Django projects
+- **Scalability**: As the project grows, this organization will accommodate new components without major restructuring
+
 Create the following directory structure for the backend:
 
 ```

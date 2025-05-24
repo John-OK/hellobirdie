@@ -93,6 +93,14 @@ docker compose down
 
 ## Troubleshooting Common Issues
 
+### Understanding Common Error Messages
+
+- **"FATAL: database 'hellobirdie' does not exist"**: The specified database hasn't been created yet. Use the `createdb` command shown below.
+- **"FATAL: role 'postgres' does not exist"**: The specified database user doesn't exist. Create it with `createuser`.
+- **"FATAL: password authentication failed for user 'postgres'"**: The password in your settings doesn't match the one in PostgreSQL.
+- **"could not connect to server: Connection refused"**: PostgreSQL server isn't running or is using a different port.
+- **"django.db.utils.OperationalError: FATAL: database 'hellobirdie' is being accessed by other users"**: Other connections are preventing operations. Check for other sessions using the database.
+
 ### Connection Refused
 
 If you see a "connection refused" error, check:
