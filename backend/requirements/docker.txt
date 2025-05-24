@@ -1,0 +1,9 @@
+# Import base and test requirements
+-r base.txt
+-r test.txt
+
+# Production-ready server
+gunicorn==21.2.0
+
+# Monitoring
+sentry-sdk==1.39.1
