@@ -42,7 +42,7 @@ A modern, type-safe web application for visualizing bird locations from the xeno
 
    ```bash
    # Start backend services (Docker)
-   docker-compose up -d
+   docker compose up -d
 
    # Start frontend development server
    cd frontend

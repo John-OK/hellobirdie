@@ -30,14 +30,14 @@ We use Docker for development to ensure consistency:
 
 ```bash
 # Start the development environment
-docker-compose up -d
+docker compose up -d
 
 # Run tests
-docker-compose exec backend pytest
+docker compose exec backend pytest
 
 # Format code
-docker-compose exec backend black .
-docker-compose exec backend isort .
+docker compose exec backend black .
+docker compose exec backend isort .
 ```
 
 See our [Docker Guide](docs/setup/docker-guide.md) for detailed instructions.
@@ -45,12 +45,14 @@ See our [Docker Guide](docs/setup/docker-guide.md) for detailed instructions.
 ### Code Review Guidelines
 
 1. Testing:
+
    - Tests must be written first (TDD)
    - All tests must pass
    - Coverage must be maintained
    - Integration tests for API endpoints
 
 2. Code Quality:
+
    - Follow project style guide
    - Documentation must be updated
    - No security vulnerabilities
