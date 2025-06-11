@@ -12,6 +12,8 @@ services:
       - DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
       - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
+      - IN_DOCKER=True
+      - TZ=UTC
     depends_on:
       - db
 
@@ -23,6 +25,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=hellobirdie
+      - TZ=UTC
     ports:
       - "5433:5432" # Using port 5433 on host to avoid conflicts with local PostgreSQL
 

@@ -32,6 +32,13 @@ DEBUG = True
 # Allow all hosts in local development
 ALLOWED_HOSTS = ["*"]
 
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = "/static/"
+
+# Time zone settings
+TIME_ZONE = "UTC"
+USE_TZ = True
+
 # Add the api app to INSTALLED_APPS
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -87,8 +94,8 @@ else:
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": os.environ.get("POSTGRES_DB", "hellobirdie"),
-            "USER": os.environ.get("POSTGRES_USER", "hellobirdie_user"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "hellobirdie_password"),
+            "USER": os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
             "HOST": os.environ.get(
                 "POSTGRES_HOST", "localhost" if not IN_DOCKER else "db"
             ),

@@ -107,6 +107,8 @@ services:
       - DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
       - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
+      - IN_DOCKER=True # Added to help settings determine correct database host
+      - TZ=UTC
     depends_on:
       - db
 
@@ -118,6 +120,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=hellobirdie
+      - TZ=UTC
     ports:
       - "5433:5432" # Using port 5433 on host to avoid conflicts with local PostgreSQL
 
@@ -180,16 +183,25 @@ BASE_DIR = parent_dir.parent
 from hellobirdie.settings import *
 
 # Root URL configuration
-ROOT_URLCONF = 'hellobirdie.urls'
+ROOT_URLCONF = "hellobirdie.urls"
 
 # Security settings
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-development-key-for-testing-only')
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY", "django-insecure-development-key-for-testing-only"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 # Allow all hosts in local development
 ALLOWED_HOSTS = ["*"]
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Time zone settings
+TIME_ZONE = 'UTC'
+USE_TZ = True
 
 # Add the api app to INSTALLED_APPS
 INSTALLED_APPS = [
@@ -205,15 +217,15 @@ INSTALLED_APPS = [
 # Templates configuration required for admin
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -221,36 +233,36 @@ TEMPLATES = [
 
 # Middleware configuration required for admin
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 # Database configuration
 # Use PostgreSQL for both local development and Docker environments
 
 # Check if we're running in a Docker environment
-IN_DOCKER = os.environ.get('IN_DOCKER', False)
+IN_DOCKER = os.environ.get("IN_DOCKER", False)
 
 # Try to use LOCAL_DATABASE_URL if available
 local_db_url = os.environ.get("LOCAL_DATABASE_URL")
 if local_db_url:
-    DATABASES = {
-        "default": dj_database_url.parse(local_db_url)
-    }
+    DATABASES = {"default": dj_database_url.parse(local_db_url)}
 else:
     # Standard PostgreSQL configuration
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": os.environ.get("POSTGRES_DB", "hellobirdie"),
-            "USER": os.environ.get("POSTGRES_USER", "hellobirdie_user"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "hellobirdie_password"),
-            "HOST": os.environ.get("POSTGRES_HOST", "localhost" if not IN_DOCKER else "db"),
+            "USER": os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.environ.get(
+                "POSTGRES_HOST", "localhost" if not IN_DOCKER else "db"
+            ),
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         }
     }
