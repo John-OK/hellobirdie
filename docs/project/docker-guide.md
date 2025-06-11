@@ -191,7 +191,18 @@ cd frontend
 npm run dev
 
 # Run backend tests
-docker compose exec backend pytest
+# Always specify the test module path to avoid import errors
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Examples:
+# Test a specific module
+docker compose exec backend python manage.py test api.tests.test_health
+
+# Test a specific test class
+docker compose exec backend python manage.py test api.tests.test_health:HealthCheckTestCase
+
+# Test a specific test method
+docker compose exec backend python manage.py test api.tests.test_health:HealthCheckTestCase.test_health_check_returns_ok_status
 
 # Format backend code
 docker compose exec backend black .
