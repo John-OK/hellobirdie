@@ -193,7 +193,11 @@ cd backend
 python manage.py runserver
 
 # Run tests
-python manage.py test
+# Always specify the test module path to avoid import errors
+python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+python manage.py test api.tests.test_health
 # or with pytest
 pytest
 
@@ -208,7 +212,11 @@ pytest --cov=api
 docker compose up -d
 
 # Run Django tests
-docker compose exec backend python manage.py test
+# Always specify the test module path to avoid import errors
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+docker compose exec backend python manage.py test api.tests.test_health
 
 # Run pytest tests
 docker compose exec backend pytest

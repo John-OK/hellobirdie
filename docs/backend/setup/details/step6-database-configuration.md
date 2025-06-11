@@ -65,7 +65,11 @@ Let's verify that our database configuration works correctly in the local enviro
 
 ```bash
 # Run tests
-python manage.py test
+# Always specify the test module path to avoid import errors
+python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+python manage.py test api.tests.test_health
 
 # Start the development server
 python manage.py runserver
@@ -85,7 +89,11 @@ docker compose up -d
 docker compose exec backend python manage.py migrate
 
 # Run tests in Docker
-docker compose exec backend python manage.py test
+# Always specify the test module path to avoid import errors
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+docker compose exec backend python manage.py test api.tests.test_health
 
 # Stop Docker containers
 docker compose down

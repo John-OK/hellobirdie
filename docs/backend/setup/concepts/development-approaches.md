@@ -58,7 +58,11 @@ python manage.py runserver
 docker compose up
 
 # Run a command in the container
-docker compose exec backend python manage.py test
+# Run tests with specific module path to avoid import errors
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+docker compose exec backend python manage.py test api.tests.test_health
 
 # Rebuild after dependency changes
 docker compose build

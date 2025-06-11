@@ -278,7 +278,11 @@ These work in VS Code and similar IDEs:
 
 ```bash
 # Backend tests
-python manage.py test
+# Always specify the test module path to avoid import errors
+python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+python manage.py test api.tests.test_health
 
 # Frontend tests
 npm test

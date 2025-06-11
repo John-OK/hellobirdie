@@ -373,7 +373,11 @@ docker compose logs backend
 docker compose exec backend python manage.py [command]
 
 # Run tests (you'll implement these in Step 4)
-docker compose exec backend python manage.py test
+# Always specify the test module path to avoid import errors
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Example: Test the health check endpoint
+docker compose exec backend python manage.py test api.tests.test_health
 
 # Stop all containers when you're done
 docker compose down
