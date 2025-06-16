@@ -56,22 +56,54 @@ backend/
 │   └── serializers.py
 ```
 
-## Docker and TDD
+## Hybrid TDD Workflow
 
-### Benefits
+We employ a hybrid TDD approach with both local and Docker environments to maximize development speed and reliability.
 
-- **Consistent Environment**: Tests run in the same environment for all developers
-- **Service Integration**: Easy to test with real databases and services
-- **CI/CD Ready**: Tests in Docker match CI environment
+### Local Development (Primary)
 
-### Workflow
+#### Benefits
+
+- **Faster Feedback**: Quick test runs without Docker overhead
+- **Simplified Debugging**: Direct access to Python debuggers
+- **Enhanced TDD Flow**: Red-Green-Refactor cycle speed increased
+
+#### Workflow
 
 ```bash
+# Make sure your virtual environment is activated
+source .venv/bin/activate
+
+# Run all tests with pytest (from backend directory)
+cd backend
+python -m pytest
+
+# Run specific tests with clear module paths
+python manage.py test api.tests.test_models
+
+# Run with coverage
+python -m pytest --cov=api
+```
+
+### Docker Verification (Secondary)
+
+#### Benefits
+
+- **Consistent Environment**: Verifies tests work the same for all developers
+- **Service Integration**: Validates database interactions
+- **CI/CD Ready**: Tests in Docker match CI environment
+
+#### Workflow
+
+```bash
+# Start all services
+docker compose up -d
+
 # Run all tests in Docker
 docker compose exec backend pytest
 
-# Run specific tests
-docker compose exec backend pytest api/tests/test_models.py
+# Run specific tests with explicit module paths
+docker compose exec backend python manage.py test api.tests.test_models
 
 # Run with coverage
 docker compose exec backend pytest --cov=api

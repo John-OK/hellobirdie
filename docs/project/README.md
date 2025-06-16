@@ -17,9 +17,16 @@ This directory contains project-wide documentation that applies to both frontend
   - IDE configuration
   - Local development setup
 
+- **[hybrid_workflow_guide.md](./hybrid_workflow_guide.md)** - Our hybrid development workflow
+
+  - Local development approach (primary)
+  - Docker verification approach (secondary)
+  - Environment consistency guidelines
+  - Workflow best practices
+
 - **[docker-guide.md](./docker-guide.md)** - Comprehensive Docker usage and configuration
   - Container architecture
-  - Common Docker commands
+  - Docker verification workflow
   - Troubleshooting
 
 ## Navigation

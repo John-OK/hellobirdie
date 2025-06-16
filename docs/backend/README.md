@@ -29,7 +29,7 @@ This directory contains documentation specific to the HelloBirdie backend implem
 - Django 5.1.6
 - Django REST Framework 3.15.2
 - PostgreSQL 17.4
-- Docker for containerization
+- Docker for verification and containerization (secondary)
 
 ## Getting Started
 

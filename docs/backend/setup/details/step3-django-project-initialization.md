@@ -2,6 +2,27 @@
 
 This guide walks through initializing the Django project for HelloBirdie, following our Test-Driven Development (TDD) approach. This document corresponds to **Step 3** in the [Hybrid Backend Setup Guide](../hybrid-backend-setup-guide.md) and provides detailed steps for setting up the Django project structure.
 
+## Prerequisites: Install PostgreSQL Client Libraries
+
+Before setting up the virtual environment, install the PostgreSQL client libraries required by psycopg (the PostgreSQL adapter for Python):
+
+```bash
+# Ubuntu/Debian
+sudo apt-get update
+sudo apt-get install -y gcc postgresql-client libpq-dev
+
+# macOS (using Homebrew)
+brew install postgresql libpq
+# You may need to add libpq to your path:
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+# Windows
+# Install PostgreSQL from the installer which includes the required client libraries
+# https://www.postgresql.org/download/windows/
+```
+
+> **Note**: These system-level dependencies are required for psycopg to compile and connect to PostgreSQL databases. Without them, pip installation of psycopg will fail.
+
 ## 1. Set Up Virtual Environment
 
 Start by creating and activating a virtual environment for local development:
@@ -284,7 +305,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hellobirdie.settings.local")
 
 This section sets up the **local development database** as explained in the dual database configuration in [Step 2, Section 4.1](./step2-environment-configuration.md#41-understanding-the-dual-database-configuration).
 
-> **Note**: If you plan to use Docker exclusively and not run Django directly on your local machine, you can skip this section as the Docker configuration will handle database setup automatically.
+> **Note**: In our hybrid workflow approach, configuring the local PostgreSQL database is essential as we primarily use local development for daily work. The Docker configuration handles database setup for verification purposes only.
 
 ```bash
 # Connect to PostgreSQL as a superuser
