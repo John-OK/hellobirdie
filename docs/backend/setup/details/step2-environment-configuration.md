@@ -181,23 +181,24 @@ Edit the `.env` file to customize the variables based on your local development 
 
 ### 4.1 Understanding the Dual Database Configuration
 
-The HelloBirdie project uses a dual database configuration approach to support both Docker and direct local development:
+The HelloBirdie project uses a hybrid workflow with a dual database configuration approach:
 
-#### Docker Environment
-
-- **Connection String**: `DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie`
-- **Credentials**: Username `postgres`, password `postgres`
-- **Host**: `db` (the Docker service name)
-- **When Used**: When running the application with `docker compose up`
-- **Why**: These are the standard credentials for the PostgreSQL Docker image
-
-#### Local Development Environment
+#### Local Development Environment (Primary)
 
 - **Connection String**: `LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie`
 - **Credentials**: Username `hellobirdie_user`, password `hellobirdie_password`
 - **Host**: `localhost` (your local PostgreSQL server)
-- **When Used**: When running Django directly with `python manage.py runserver`
-- **Why**: More secure than using default PostgreSQL credentials
+- **When Used**: For daily development with `python manage.py runserver` and `python manage.py test`
+- **Why**: Faster iterations, better IDE integration, more secure than default credentials
+- **Note**: The user needs CREATEDB permission for running Django tests locally
+
+#### Docker Environment (Verification)
+
+- **Connection String**: `DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie`
+- **Credentials**: Username `postgres`, password `postgres`
+- **Host**: `db` (the Docker service name)
+- **When Used**: For verification before commits with `docker compose up` and `docker compose exec backend python manage.py test`
+- **Why**: Ensures consistent environment for team collaboration and CI/CD
 
 > **Important**: In Step 3, you'll set up both configurations:
 >

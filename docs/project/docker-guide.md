@@ -33,21 +33,22 @@ Additional Requirements:
 
 > Note: Version numbers are explicit to ensure consistent behavior across development environments. These versions provide features we rely on, such as BuildKit and enhanced compose file syntax.
 
-## Why HelloBirdie Uses Docker
+## Docker's Role in the HelloBirdie Hybrid Workflow
 
-We use Docker to ensure:
+Help establish a hybrid development workflow, where:
 
-1. **Consistent Environments**
+1. **Local Development (Primary)**
 
-   - Every developer works with identical setups
-   - Development matches production environment
-   - No "it works on my machine" problems
+   - Day-to-day development happens in a local Python virtual environment
+   - Faster iteration and simplified debugging
+   - Direct access to Django commands
 
-2. **Easy Setup**
+2. **Docker Verification (Secondary)**
+   - Verifies changes work in a standardized environment before commits
+   - Ensures code runs consistently across different machines
+   - Simulates production-like conditions for integration testing
 
-   - New developers need only Docker installed
-   - One command to start the entire backend stack
-   - Automated dependency management
+> Note: While previously HelloBirdie used a Docker-first approach, we've transitioned to a hybrid model to improve development speed and learning outcomes.
 
 3. **Isolated Components**
    - Backend, database, and frontend run independently
@@ -56,7 +57,26 @@ We use Docker to ensure:
 
 ## Container Architecture
 
-### Development Environment
+### Primary Development Environment (Local)
+
+```text
+┌─────────────────┐     ┌─────────────────┐
+│    Frontend     │     │     Backend     │
+│   (Local Dev)   │────▶│   (Local Dev)   │
+│  localhost:5173 │     │  localhost:8000 │
+└─────────────────┘     └────────┬────────┘
+                                 │
+                                 ▼
+                        ┌─────────────────┐
+                        │    Database     │
+                        │ (Local Postgres)│
+                        │  localhost:5432 │
+                        └─────────────────┘
+```
+
+> Note: Both frontend and backend run locally during daily development for the best developer experience with hot reloading, fast feedback cycles, and straightforward debugging.
+
+### Docker Verification Environment (Secondary)
 
 ```text
 ┌─────────────────┐     ┌─────────────────┐
@@ -69,11 +89,11 @@ We use Docker to ensure:
                         ┌─────────────────┐
                         │    Database     │
                         │    Container    │
-                        │  localhost:5432 │
+                        │  localhost:5433 │
                         └─────────────────┘
 ```
 
-> Note: Frontend runs locally during development for the best developer experience with hot reloading and fast feedback cycles. It is only containerized for production deployment.
+> Note: Backend and database run in Docker containers for verification before commits, while frontend remains local for all development. The Docker PostgreSQL instance runs on port 5433 to avoid conflicts with local PostgreSQL.
 
 ### Production Environment
 
@@ -97,57 +117,75 @@ We use Docker to ensure:
 ### 1. Docker Compose Configuration
 
 ```yaml
-version: "3.8"
-
+# Docker Compose V2 configuration
 services:
   backend:
     build: ./backend
-    ports:
-      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_ENV=development
+      - DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
+      - IN_DOCKER=True
+      - TZ=UTC
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/hellobirdie
 
   db:
-    image: postgres:17
-    ports:
-      - "5432:5432"
+    image: postgres:17.4
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/
     environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=hellobirdie
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      - TZ=UTC
+    ports:
+      - "5433:5432" # Using port 5433 on host to avoid conflicts with local PostgreSQL
 
 volumes:
   postgres_data:
 ```
 
+> Note: Port 5433 is used on the host to avoid conflicts with your local PostgreSQL installation.
+
 ### 2. Backend Dockerfile
 
 ```dockerfile
-FROM python:3.13-slim
+FROM python:3.13.1-slim
 
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_ENV=development
+
+# Set work directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including PostgreSQL client libraries
 RUN apt-get update && apt-get install -y \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+  gcc \
+  postgresql-client \
+  libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY requirements /app/requirements
+RUN pip install --no-cache-dir -r requirements/docker.txt
 
-# Copy project files
-COPY . .
+# Copy project
+COPY . /app/
 
-# Run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "hellobirdie.wsgi:application"]
 ```
+
+> Note: While the Docker container is configured to use gunicorn, the docker-compose configuration overrides this command to use Django's runserver for development.
 
 ## Common Docker Commands
 
