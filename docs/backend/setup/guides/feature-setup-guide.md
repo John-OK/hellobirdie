@@ -5,6 +5,7 @@ This guide builds upon the backend setup and provides detailed steps for impleme
 ## Feature Development Workflow
 
 ### 1. Planning Phase
+
 - Define feature requirements and acceptance criteria
 - Break down into testable units
 - Create test plan document
@@ -12,6 +13,7 @@ This guide builds upon the backend setup and provides detailed steps for impleme
   > Example: `feature/bird-location-tracking`
 
 ### 2. Test Implementation
+
 - Write unit tests for models
 - Write unit tests for services
 - Write integration tests for API endpoints
@@ -19,6 +21,7 @@ This guide builds upon the backend setup and provides detailed steps for impleme
 - Document test coverage expectations
 
 ### 3. Feature Implementation
+
 - Implement models and migrations
 - Add service layer logic
 - Create API endpoints
@@ -26,13 +29,29 @@ This guide builds upon the backend setup and provides detailed steps for impleme
 - Document API endpoints using OpenAPI/Swagger
 
 ### 4. Code Review Preparation
-- Run test suite locally
+
+- Run test suite in local environment first
+- Verify all tests also pass in Docker environment
+
+  ```bash
+  # Local verification
+  source .venv/bin/activate
+  cd backend
+  python manage.py test api.tests
+
+  # Docker verification
+  docker compose up -d
+  docker compose exec backend python manage.py test api.tests
+  docker compose down
+  ```
+
 - Update documentation
 - Check code against style guide
 - Verify mobile responsiveness
 - Complete PR template
 
 ### 5. Deployment Considerations
+
 - Update environment variables if needed
 - Add feature flags if required
 - Document rollback procedures
@@ -42,6 +61,7 @@ This guide builds upon the backend setup and provides detailed steps for impleme
 ## Example: Adding Bird Location Feature
 
 ### 1. Test First
+
 ```python
 def test_bird_location_creation():
     # Given
@@ -50,16 +70,17 @@ def test_bird_location_creation():
         "longitude": -0.1278,
         "accuracy": 10.0
     }
-    
+
     # When
     response = client.post("/api/bird-locations/", location_data)
-    
+
     # Then
     assert response.status_code == 201
     assert "id" in response.json()
 ```
 
 ### 2. Implementation
+
 - Create BirdLocation model
 - Add LocationService for business logic
 - Implement API endpoint
@@ -67,6 +88,7 @@ def test_bird_location_creation():
 - Update documentation
 
 ### 3. Quality Checks
+
 - Run performance tests
 - Check error handling
 - Verify logging
@@ -74,6 +96,7 @@ def test_bird_location_creation():
 - Review security implications
 
 ## Best Practices Reminder
+
 - Write tests before implementation
 - Keep functions small and focused
 - Document API changes
@@ -82,6 +105,7 @@ def test_bird_location_creation():
 - Maintain test coverage
 
 ## Common Pitfalls
+
 - Skipping test coverage
 - Insufficient error handling
 - Missing documentation
