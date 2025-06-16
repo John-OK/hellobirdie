@@ -49,11 +49,12 @@ HelloBirdie Documentation
 
 New team members should start with:
 
-1. [Development Environment Setup](./project/development-environment.md) - Set up your development tools
+1. [Development Environment Setup](./project/development-environment.md) - Set up your local development tools
 2. [Project Architecture Overview](./project/architecture/system-overview.md) - Understand the system design
-3. [Docker Guide](./project/docker-guide.md) - Learn container usage for the project
-4. [Backend Setup Guide](./backend/setup/hybrid-backend-setup-guide.md) - Set up the backend
-5. [API Endpoints](./backend/api/endpoints.md) - Explore available API endpoints
+3. [Hybrid Workflow Guide](./project/hybrid_workflow_guide.md) - Learn our hybrid development approach
+4. [Backend Setup Guide](./backend/setup/hybrid-backend-setup-guide.md) - Set up the backend locally
+5. [Docker Guide](./project/docker-guide.md) - Learn Docker for verification and testing
+6. [API Endpoints](./backend/api/endpoints.md) - Explore available API endpoints
 
 ## Development Principles
 

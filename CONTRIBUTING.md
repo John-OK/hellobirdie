@@ -26,21 +26,40 @@
 
 ### Development Environment
 
-We use Docker for development to ensure consistency:
+We use a hybrid development approach with local development for daily work and Docker for verification:
+
+#### Local Development (Primary)
 
 ```bash
-# Start the development environment
-docker compose up -d
+# Activate virtual environment
+source .venv/bin/activate
 
-# Run tests
-docker compose exec backend pytest
+# Run the Django development server
+cd backend
+python manage.py runserver
+
+# Run tests (always specify the test module path)
+python manage.py test api.tests.<test_module>
 
 # Format code
-docker compose exec backend black .
-docker compose exec backend isort .
+black .
+isort .
 ```
 
-See our [Docker Guide](docs/setup/docker-guide.md) for detailed instructions.
+#### Docker Verification (Before Committing)
+
+```bash
+# Start Docker services
+docker compose up -d
+
+# Run tests in Docker
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Stop Docker when done
+docker compose down
+```
+
+See our [Hybrid Workflow Guide](docs/project/hybrid_workflow_guide.md) for detailed instructions.
 
 ### Code Review Guidelines
 

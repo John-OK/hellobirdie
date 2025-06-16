@@ -48,7 +48,7 @@ HelloBirdie follows these core principles:
 
 1. **Test-Driven Development** - We write tests before implementation
 2. **PostgreSQL for all environments** - Consistent database across development, testing, and production
-3. **Hybrid development approach** - Local development with Docker-based testing
+3. **Hybrid development approach** - Local-first development and testing, with Docker-based verification
 4. **Mobile-first design** - All features are designed for mobile compatibility first
 
 ## Need Help?

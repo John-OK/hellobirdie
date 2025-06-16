@@ -4,8 +4,8 @@
 
 For the HelloBirdie project, we're using a hybrid development approach that combines:
 
-1. Local development with virtual environments
-2. Docker-based testing and deployment
+1. Local development and testing with virtual environments (primary workflow)
+2. Docker-based verification before commits and deployment (secondary workflow)
 
 ## Local Development (Primary)
 
@@ -35,7 +35,7 @@ cd backend
 python manage.py runserver
 ```
 
-## Docker Environment (Secondary)
+## Docker Environment (Secondary - Verification)
 
 ### Benefits
 
@@ -46,10 +46,10 @@ python manage.py runserver
 
 ### When to Use Docker
 
-- Before committing major changes
-- When testing database interactions
-- For final verification of features
+- For final verification before committing changes
+- When integration testing across multiple services
 - When simulating production environment
+- For CI/CD pipeline consistency
 
 ### Docker Commands
 
@@ -73,10 +73,16 @@ docker compose build
 ## TDD Workflow in Hybrid Environment
 
 1. Write tests in local environment
-2. Implement features locally
-3. Run tests locally for quick feedback
-4. Verify in Docker before committing
-5. CI/CD pipeline runs tests in Docker
+2. Run tests locally using `python manage.py test api.tests.<test_module>`
+3. Implement features locally
+4. Run tests locally again for rapid feedback cycles
+5. Verify in Docker before committing:
+   ```bash
+   docker compose up -d
+   docker compose exec backend python manage.py test api.tests.<test_module>
+   ```
+6. Create pull request with all tests passing in both environments
+7. CI/CD pipeline runs tests in Docker
 
 ## Recommended IDE Extensions
 
