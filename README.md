@@ -12,16 +12,17 @@ A modern, type-safe web application for visualizing bird locations from the xeno
 
 1. Prerequisites:
 
-   - Docker Desktop 4.38.0 or Docker Engine 28.0.0
-   - Docker Compose 2.33.0
+   For local development (primary):
+
+   - Python 3.13.1
+   - PostgreSQL 17.4
    - Node.js 22.14.0 (LTS)
    - Git
 
-   Optional for local development:
+   For Docker verification:
 
-   - Node.js 22.x (for frontend development)
-   - Python 3.13 (for backend development)
-   - PostgreSQL 17 (for database management)
+   - Docker Desktop 4.38.0 or Docker Engine 28.0.0
+   - Docker Compose 2.33.0
 
 2. Installation:
 
@@ -41,13 +42,38 @@ A modern, type-safe web application for visualizing bird locations from the xeno
 4. Start the Application:
 
    ```bash
-   # Start backend services (Docker)
-   docker compose up -d
+   # Local Development (Primary Workflow)
 
-   # Start frontend development server
+   # Set up Python virtual environment
+   python -m venv .venv
+   source .venv/bin/activate
+
+   # Install backend dependencies
+   pip install -r backend/requirements/local.txt
+
+   # Run database migrations
+   cd backend
+   python manage.py migrate
+   python manage.py runserver
+
+   # In another terminal, start the frontend
    cd frontend
    npm install
    npm run dev
+   ```
+
+   For Docker verification before commits:
+
+   ```bash
+   # Stop local servers if running
+   # Start Docker services
+   docker compose up -d
+
+   # Run tests to verify
+   docker compose exec backend python manage.py test
+
+   # Stop Docker when done
+   docker compose down
    ```
 
    The application will be available at:
