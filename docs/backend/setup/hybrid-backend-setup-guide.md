@@ -62,17 +62,24 @@ Follow the [Step 2: Environment Configuration](./details/step2-environment-confi
 
 Follow the [Step 3: Django Project Initialization](./details/step3-django-project-initialization.md) guide to:
 
-- Set up virtual environment
-- Install dependencies
+**Primary: Local Development Environment**
+
+- Set up Python virtual environment in the project root (.venv)
+- Install dependencies for local development
 - Create Django project structure
 - Create API app with tests directory
-- Set up Docker configuration
+- Configure local PostgreSQL connection
+
+**Secondary: Docker Verification Environment**
+
+- Set up Docker configuration for verification
   - Create Dockerfile for the backend
   - Configure Docker Compose with PostgreSQL
-  - Create minimal settings structure for Docker
-- Verify Docker setup
-- Commit Point: "Django project structure and Docker configuration"
-  > Why: Establishes the core Django project structure and containerization
+  - Create settings structure for Docker testing
+- Use Docker for verification before commits
+
+- Commit Point: "Django project structure with hybrid workflow setup"
+  > Why: Establishes the core Django project with local-first development and Docker verification
 
 ### 4. Implementing First Feature with TDD
 
@@ -204,6 +211,49 @@ pytest
 # Run tests with coverage
 pytest --cov=api
 ```
+
+### PostgreSQL Adapter Installation for Local Development
+
+To connect to PostgreSQL from your local Python environment, you need the psycopg package, which requires some system dependencies. Install these dependencies before installing Python packages:
+
+#### Ubuntu/Debian
+
+```bash
+# Install required system dependencies
+sudo apt update && sudo apt install -y gcc postgresql-client libpq-dev
+
+# Verify installations
+gcc --version
+psql --version
+dpkg -s libpq-dev
+```
+
+#### macOS
+
+```bash
+# Using Homebrew
+brew install postgresql libpq
+
+# Add libpq to your PATH (required for building psycopg)
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+```
+
+#### Windows
+
+1. Install [PostgreSQL](https://www.postgresql.org/download/windows/)
+2. Ensure PostgreSQL bin directory is in your PATH
+3. Install build tools:
+   ```bash
+   pip install wheel
+   ```
+
+After installing system dependencies, you can install Python requirements:
+
+```bash
+pip install -r backend/requirements/local.txt
+```
+
+> **Troubleshooting**: If you encounter errors about missing `pg_config` or failed PostgreSQL adapter builds, make sure libpq-dev is properly installed and in your PATH. For Windows, consider using a pre-compiled wheel: `pip install psycopg2-binary==2.9.9`
 
 ### Docker Testing (Secondary)
 

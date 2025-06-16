@@ -2,15 +2,20 @@
 
 ## Prerequisites
 
-### Required Software
+### Required Software for Local Development (Primary)
 
-- Docker Desktop 4.38.0 or Docker Engine 28.0.0
-  > Latest stable versions with enhanced security and performance features
-- Docker Compose 2.33.0
-  > Latest stable version with improved compose spec support
+- Python 3.13.1
+  > Latest stable version with optimized performance and security features
+- PostgreSQL 17.4
+  > Latest stable version for local database development
 - Node.js 22.14.0 (LTS)
   > Latest Long Term Support version for optimal stability and security
 - Git
+
+### Required Software for Docker Verification (Secondary)
+
+- Docker Desktop 4.38.0 or Docker Engine 28.0.0
+- Docker Compose 2.33.0
 
 ### Recommended Tools
 
@@ -18,11 +23,7 @@
 - pgAdmin or DBeaver for database management
 - Postman or Insomnia for API testing
 
-> Note: While Docker handles the runtime environment, local installations can enhance development:
->
-> - Node.js 22.x (TypeScript development)
-> - Python 3.13 (backend development)
-> - PostgreSQL 17 (database management)
+> Note: We use a hybrid development approach where daily development happens in the local environment and Docker is used for verification before commits. This approach provides faster development cycles and a better learning experience.
 
 ## TypeScript Development Setup
 
@@ -83,7 +84,59 @@ cd hellobirdie
 
 ### 2. Backend Setup
 
-#### Docker Configuration
+#### Local Development Setup (Primary)
+
+##### 1. Prerequisites: Install PostgreSQL Client Libraries
+
+Psycopg (the PostgreSQL adapter for Python) requires system-level dependencies. Install them before proceeding:
+
+```bash
+# Ubuntu/Debian
+sudo apt-get update
+sudo apt-get install -y gcc postgresql-client libpq-dev
+
+# macOS (using Homebrew)
+brew install postgresql libpq
+# You may need to add libpq to your path:
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+# Windows
+# Install PostgreSQL from the installer which includes the required client libraries
+# https://www.postgresql.org/download/windows/
+```
+
+##### 2. Python Environment Setup
+
+```bash
+# Create and activate virtual environment (if not already done)
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r backend/requirements/local.txt
+```
+
+##### 3. Database Setup and Running the Server
+
+```bash
+# Run migrations
+cd backend
+python manage.py migrate
+
+# Start development server
+python manage.py runserver
+```
+
+##### Troubleshooting psycopg Installation
+
+If you encounter errors installing psycopg:
+
+1. Ensure PostgreSQL client libraries are properly installed
+2. For macOS: Try `pip install psycopg --no-binary psycopg`
+3. For Windows: Ensure you have the Visual C++ build tools installed
+4. For all platforms: Consider using `pip install psycopg2-binary` as an alternative (though not recommended for production)
+
+#### Docker Configuration (Secondary - For Verification)
 
 ```bash
 # Build and start containers
@@ -111,25 +164,42 @@ cp .env.example .env
 Required variables in `.env`:
 
 ```plaintext
-# Docker Compose Settings
-COMPOSE_PROJECT_NAME=hellobirdie
-
-# Database
-DB_NAME=hellobirdie_dev
-DB_USER=hellobirdie_user
-DB_PASSWORD=your_secure_password
-DB_HOST=db  # Points to Docker service
-DB_PORT=5432
-
-# Django
+# Django settings
+DJANGO_ENV=local
 DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
-DJANGO_SECRET_KEY=generate_a_secure_key
-DEBUG=True  # Set to False in production
+DJANGO_SECRET_KEY=your-secret-key-here
+DJANGO_DEBUG=True  # Set to False in production
 
-# APIs (add keys when obtained)
+# Database settings - Hybrid Approach
+# For Docker environment (used when IN_DOCKER=True)
+DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
+DOCKER_DB_HOST_PORT=5433  # The host port when running in Docker
+
+# For Local Development (default when IN_DOCKER is not set)
+LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie
+
+# Individual Database Components
+POSTGRES_DB=hellobirdie
+POSTGRES_USER=hellobirdie_user  # Used for local development
+POSTGRES_PASSWORD=hellobirdie_password  # Used for local development
+POSTGRES_HOST=localhost  # For local development
+POSTGRES_PORT=5432  # Local PostgreSQL port
+POSTGRES_TEST_DB=test_hellobirdie
+
+# Time zone setting (consistent with Docker configuration)
+TZ=UTC
+
+# API settings
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173
+
+# Environment detection (used in settings to determine which database URL to use)
+# This is automatically set to True in the Docker container via docker-compose.yml
+# IN_DOCKER=True
+
+# Third-party APIs (add keys when obtained)
 XENO_CANTO_API_KEY=your_key_here
 MAP_TILES_API_KEY=your_key_here  # If using commercial map tiles
-GEOLOCATION_API_KEY=your_key_here  # Optional
 ```
 
 #### Development Tools
@@ -141,36 +211,58 @@ The Docker setup includes:
 - isort for import sorting
 - flake8 for linting
 
-Run tools through Docker:
+Run tools in both environments:
 
 ```bash
-# Run tests
-docker compose exec backend pytest
+# Run tests locally (primary workflow)
+cd backend
+python manage.py test api.tests.<test_module>  # Run specific tests
 
-# Format code
+# Run tests in Docker (verification)
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Format code locally
+cd backend
+black .
+isort .
+
+# Run linting locally
+flake8
+
+# Or run tools through Docker if preferred
 docker compose exec backend black .
 docker compose exec backend isort .
-
-# Run linting
 docker compose exec backend flake8
 ```
 
 #### Database Management
 
-The database is automatically:
+Both local and Docker databases are used in our hybrid workflow:
 
-- Created by Docker Compose
-- Configured for Django
+##### Local Database (Primary)
+
+- Created manually on the local PostgreSQL server
+- Used for daily development and testing
+- Accessible directly via standard PostgreSQL tools
+
+##### Docker Database (Secondary)
+
+- Created automatically by Docker Compose
+- Used for verification before commits
 - Migrated during container startup
 
-Access database:
+Access databases:
 
 ```bash
-# Using Docker
-docker compose exec db psql -U hellobirdie_user -d hellobirdie_dev
+# Access local PostgreSQL database (primary for development)
+psql -h localhost -p 5432 -U hellobirdie_user -d hellobirdie
 
-# Or using local PostgreSQL client
-psql -h localhost -p 5432 -U hellobirdie_user -d hellobirdie_dev
+# Access Docker PostgreSQL database (verification)
+# Note the port is 5433 to avoid conflicts with local PostgreSQL
+psql -h localhost -p 5433 -U postgres -d hellobirdie
+
+# Alternatively, access Docker database directly through Docker
+docker compose exec db psql -U postgres -d hellobirdie
 ```
 
 ### 3. Frontend Setup
