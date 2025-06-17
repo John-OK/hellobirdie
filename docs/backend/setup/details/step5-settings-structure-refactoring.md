@@ -169,9 +169,13 @@ Create a file named `test.py` in the `backend/hellobirdie/settings/` directory w
 
 ```python
 # hellobirdie/settings/test.py
+import os
 from .base import *
 
 DEBUG = False
+
+# Check if we're running in a Docker environment
+IN_DOCKER = os.environ.get('IN_DOCKER', False)
 
 # Use PostgreSQL for tests to match production
 DATABASES = {
@@ -180,7 +184,7 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_DB', 'test_hellobirdie'),
         'USER': os.environ.get('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db' if IN_DOCKER else 'localhost'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
@@ -280,6 +284,8 @@ This approach follows the principle of keeping configuration close to the code t
 
 Run tests to ensure the refactoring didn't break functionality:
 
+#### Local Testing (Development)
+
 ```bash
 # Run tests with local settings
 python manage.py test api.tests.test_health
@@ -287,6 +293,23 @@ python manage.py test api.tests.test_health
 # Run tests with test settings
 DJANGO_ENV=test python manage.py test api.tests.test_health
 ```
+
+#### Docker Testing (Pre-Commit Verification)
+
+Following our hybrid approach, also verify in Docker before committing:
+
+```bash
+# From the project root
+docker-compose up -d
+
+# Run tests in the Docker container
+docker-compose exec backend python manage.py test api.tests.test_health
+
+# Or with test settings explicitly
+docker-compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.test_health"
+```
+
+This ensures tests pass in both local and Docker environments, which is essential for our hybrid testing workflow.
 
 ## Next Steps
 

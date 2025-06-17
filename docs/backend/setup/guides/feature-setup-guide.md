@@ -37,11 +37,22 @@ This guide builds upon the backend setup and provides detailed steps for impleme
   # Local verification
   source .venv/bin/activate
   cd backend
+
+  # Using default development settings
   python manage.py test api.tests
+
+  # Using test-specific settings
+  DJANGO_ENV=test python manage.py test api.tests
 
   # Docker verification
   docker compose up -d
+
+  # Using default development settings
   docker compose exec backend python manage.py test api.tests
+
+  # Using test-specific settings
+  docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests"
+
   docker compose down
   ```
 
