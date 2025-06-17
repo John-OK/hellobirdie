@@ -68,6 +68,9 @@ Let's verify that our database configuration works correctly in the local enviro
 # Always specify the test module path to avoid import errors
 python manage.py test api.tests.<test_module>
 
+# To use test-specific settings
+DJANGO_ENV=test python manage.py test api.tests.<test_module>
+
 # Example: Test the health check endpoint
 python manage.py test api.tests.test_health
 
@@ -91,6 +94,9 @@ docker compose exec backend python manage.py migrate
 # Run tests in Docker
 # Always specify the test module path to avoid import errors
 docker compose exec backend python manage.py test api.tests.<test_module>
+
+# To use test-specific settings in Docker
+docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
 
 # Example: Test the health check endpoint
 docker compose exec backend python manage.py test api.tests.test_health

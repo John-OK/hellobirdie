@@ -268,14 +268,19 @@ docker compose exec backend python manage.py test api.tests.<test_module>
 # Example: Test the health check endpoint
 docker compose exec backend python manage.py test api.tests.test_health
 
-# Run pytest tests
+# Run pytest tests with default settings
 docker compose exec backend pytest
+
+# Run tests with explicit test settings
+docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test"
 
 # Run with coverage
 docker compose exec backend pytest --cov=api
 
 # Shut down containers
 docker compose down
+
+> **Note:** Use `DJANGO_ENV=test` when running comprehensive test suites or when you need test-specific optimizations. See [TDD Testing Strategy](./tdd-testing-strategy.md#split-settings-and-tdd) for details.
 
 > **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
 ```

@@ -73,14 +73,30 @@ docker compose build
 ## TDD Workflow in Hybrid Environment
 
 1. Write tests in local environment
-2. Run tests locally using `python manage.py test api.tests.<test_module>`
+2. Run tests locally using regular or test-specific settings:
+
+   ```bash
+   # Regular development settings
+   python manage.py test api.tests.<test_module>
+
+   # Test-specific settings
+   DJANGO_ENV=test python manage.py test api.tests.<test_module>
+   ```
+
 3. Implement features locally
 4. Run tests locally again for rapid feedback cycles
 5. Verify in Docker before committing:
+
    ```bash
    docker compose up -d
+
+   # Regular development settings
    docker compose exec backend python manage.py test api.tests.<test_module>
+
+   # Test-specific settings
+   docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
    ```
+
 6. Create pull request with all tests passing in both environments
 7. CI/CD pipeline runs tests in Docker
 

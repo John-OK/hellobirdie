@@ -41,6 +41,9 @@ python manage.py runserver
 # Run tests (always specify the test module path)
 python manage.py test api.tests.<test_module>
 
+# Run tests with test-specific settings
+DJANGO_ENV=test python manage.py test api.tests.<test_module>
+
 # Format code
 black .
 isort .
@@ -54,6 +57,9 @@ docker compose up -d
 
 # Run tests in Docker
 docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Run tests with test-specific settings in Docker
+docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
 
 # Stop Docker when done
 docker compose down

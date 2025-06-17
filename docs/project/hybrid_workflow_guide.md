@@ -36,6 +36,9 @@ python manage.py test api.tests.<test_module>
 # Example: Test the health check endpoint
 python manage.py test api.tests.test_health
 
+# Run tests with test-specific settings
+DJANGO_ENV=test python manage.py test api.tests.<test_module>
+
 # Create migrations
 python manage.py makemigrations
 
@@ -64,6 +67,9 @@ docker compose exec backend python manage.py test api.tests.<test_module>
 
 # Example: Test the health check endpoint
 docker compose exec backend python manage.py test api.tests.test_health
+
+# Run tests with test-specific settings in Docker
+docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
 
 # Run migrations in Docker
 docker compose exec backend python manage.py migrate

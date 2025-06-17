@@ -113,23 +113,42 @@ docker compose exec backend pytest --cov=api
 
 ## Split Settings and TDD
 
-The test.py settings file provides several TDD benefits:
+The project uses a split settings approach with environment-specific configuration files. For testing, we have a dedicated `test.py` settings file that provides several TDD benefits:
+
+### Setting the Test Environment
+
+```bash
+# Run tests with test settings (local development)
+DJANGO_ENV=test python -m pytest
+
+# Run tests with test settings (Docker)
+docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test"
+```
+
+### When to Use Test Settings
+
+- **Comprehensive test suites**: When running a full test suite with database-intensive tests
+- **Testing environment-specific features**: For features that behave differently in test vs. production
+- **Pre-deployment verification**: To ensure tests pass in a production-like environment
+- **CI/CD pipeline simulation**: When you want to match the CI environment locally
+
+### Benefits of Test Settings
 
 1. **Reliability**:
 
    - Uses dedicated PostgreSQL test database
-   - Simpler password hashing
+   - Simpler password hashing for faster tests
    - Disabled non-essential middleware
 
 2. **Isolation**:
 
-   - Separate test database
-   - Disabled caching
+   - Separate test database prevents polluting development data
+   - Disabled caching for predictable results
    - Controlled environment variables
 
 3. **Reproducibility**:
    - Same settings for all developers
-   - Consistent test behavior
+   - Consistent test behavior across environments
 
 ## TDD Best Practices for HelloBirdie
 
