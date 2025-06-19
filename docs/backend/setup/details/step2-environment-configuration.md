@@ -89,27 +89,38 @@ Create a file named `.env.sample` in the project root directory with the followi
 ```
 # Django settings
 DJANGO_ENV=local  # Options: local, test, production
-DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
+# Do not set DJANGO_SETTINGS_MODULE here - it's handled by settings/__init__.py
 DJANGO_SECRET_KEY=your-secret-key-here
 DJANGO_DEBUG=True
 
-# Database settings - Docker
+# Database settings - Hybrid Approach
+# For Docker environment (used when IN_DOCKER=True)
 DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
+DOCKER_DB_HOST_PORT=5433  # The host port when running in Docker
 
-# Database settings - Local Development
+# For Local Development (default when IN_DOCKER is not set)
 LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie
 
-# Individual Database Components (used by some Django settings)
+# Individual Database Components (used in some Django settings configurations)
+# These values are used for local development by default
 POSTGRES_DB=hellobirdie
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=localhost
+POSTGRES_USER=hellobirdie_user  # Updated to match local development user
+POSTGRES_PASSWORD=hellobirdie_password  # Updated to match local development password
+POSTGRES_HOST=localhost  # For local development
 POSTGRES_PORT=5432
 POSTGRES_TEST_DB=test_hellobirdie
 
+# Time zone setting (consistent with Docker configuration)
+TZ=UTC
+
 # API settings
 ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+# Updated to include Vite's default port 5173 as mentioned in our diagrams
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173
+
+# Environment detection (used in settings to determine which database URL to use)
+# This is automatically set to True in the Docker container via docker-compose.yml
+# IN_DOCKER=True
 ```
 
 ### 2. Create or Update Your Local Environment File
