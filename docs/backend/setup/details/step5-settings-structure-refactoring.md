@@ -169,18 +169,18 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("POSTGRES_DB", "hellobirdie"),
-            "USER": os.environ.get("POSTGRES_USER",
-                      "postgres" if IN_DOCKER else "hellobirdie_user"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD",
-                         "postgres" if IN_DOCKER else "hellobirdie_password"),
-            "HOST": os.environ.get("POSTGRES_HOST", "db" if IN_DOCKER else "localhost"),
-            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+            "NAME": os.environ.get("LOCAL_POSTGRES_DB", "hellobirdie") if not IN_DOCKER else os.environ.get("POSTGRES_DB", "hellobirdie"),
+            "USER": os.environ.get("LOCAL_POSTGRES_USER", "hellobirdie_user") if not IN_DOCKER else os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("LOCAL_POSTGRES_PASSWORD", "hellobirdie_password") if not IN_DOCKER else os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.environ.get("LOCAL_POSTGRES_HOST", "localhost") if not IN_DOCKER else os.environ.get("POSTGRES_HOST", "db"),
+            "PORT": os.environ.get("LOCAL_POSTGRES_PORT", "5432") if not IN_DOCKER else os.environ.get("POSTGRES_PORT", "5432"),
         }
     }
 ```
 
 ### 4. Create Test Settings (test.py)
+
+**Note**: This file is created from scratch during the settings refactoring process, as it wasn't part of the minimal settings structure:
 
 Create a file named `test.py` in the `backend/hellobirdie/settings/` directory with the following content:
 
@@ -232,13 +232,11 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_TEST_DB', 'hellobirdie_test'),
-            'USER': os.environ.get('POSTGRES_USER',
-                    'postgres' if IN_DOCKER else 'hellobirdie_user'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD',
-                       'postgres' if IN_DOCKER else 'hellobirdie_password'),
-            'HOST': os.environ.get('POSTGRES_HOST', 'db' if IN_DOCKER else 'localhost'),
-            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            'NAME': os.environ.get('POSTGRES_TEST_DB', 'test_hellobirdie') if IN_DOCKER else os.environ.get('LOCAL_POSTGRES_DB', 'hellobirdie_test'),
+            'USER': os.environ.get('LOCAL_POSTGRES_USER', 'hellobirdie_user') if not IN_DOCKER else os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('LOCAL_POSTGRES_PASSWORD', 'hellobirdie_password') if not IN_DOCKER else os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': os.environ.get('LOCAL_POSTGRES_HOST', 'localhost') if not IN_DOCKER else os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': os.environ.get('LOCAL_POSTGRES_PORT', '5432') if not IN_DOCKER else os.environ.get('POSTGRES_PORT', '5432'),
         }
     }
 

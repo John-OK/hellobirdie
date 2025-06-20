@@ -126,10 +126,9 @@ services:
     environment:
       - DJANGO_ENV=local # Must match the environment name used in settings/__init__.py
       # Do not set DJANGO_SETTINGS_MODULE here - allow __init__.py to handle it based on DJANGO_ENV
-      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
       - IN_DOCKER=True # Helps settings determine correct database host
-      - TZ=UTC
+    env_file:
+      - ./backend/.env # Load backend-specific environment variables
     depends_on:
       - db
 
@@ -155,8 +154,8 @@ volumes:
 >
 > **Updating Connection Settings**: If you change the port mapping, you'll need to update your connection settings in three places:
 >
-> 1. In your `.env` file: Update `POSTGRES_PORT=5433` to match your new port
-> 2. In `local.py`: Update the default port in `os.environ.get("POSTGRES_PORT", "5433")` to match your new port
+> 1. In your root `.env` file: Update `POSTGRES_PORT=5433` to match your new port
+> 2. In your backend `.env` file: Update the `LOCAL_DATABASE_URL` to use the new port
 > 3. For direct database access: Use `psql -h localhost -p 5433 -U postgres -d hellobirdie` (adjusting the port as needed)
 
 ## 5. Minimal Settings Structure
@@ -272,8 +271,8 @@ MIDDLEWARE = [
 IN_DOCKER = os.environ.get("IN_DOCKER", "").lower() == "true"
 
 # Database URL handling logic
-# 1. If in Docker, use DATABASE_URL
-# 2. If not in Docker but LOCAL_DATABASE_URL exists, use that
+# 1. If in Docker, use DATABASE_URL from backend/.env
+# 2. If not in Docker but LOCAL_DATABASE_URL exists, use that from backend/.env
 # 3. Otherwise fallback to individual environment variables
 
 if IN_DOCKER and os.environ.get("DATABASE_URL"):
@@ -287,13 +286,11 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("POSTGRES_DB", "hellobirdie"),
-            "USER": os.environ.get("POSTGRES_USER",
-                      "postgres" if IN_DOCKER else "hellobirdie_user"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD",
-                         "postgres" if IN_DOCKER else "hellobirdie_password"),
-            "HOST": os.environ.get("POSTGRES_HOST", "db" if IN_DOCKER else "localhost"),
-            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+            "NAME": os.environ.get("LOCAL_POSTGRES_DB", "hellobirdie") if not IN_DOCKER else os.environ.get("POSTGRES_DB", "hellobirdie"),
+            "USER": os.environ.get("LOCAL_POSTGRES_USER", "hellobirdie_user") if not IN_DOCKER else os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("LOCAL_POSTGRES_PASSWORD", "hellobirdie_password") if not IN_DOCKER else os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.environ.get("LOCAL_POSTGRES_HOST", "localhost") if not IN_DOCKER else os.environ.get("POSTGRES_HOST", "db"),
+            "PORT": os.environ.get("LOCAL_POSTGRES_PORT", "5432") if not IN_DOCKER else os.environ.get("POSTGRES_PORT", "5432"),
         }
     }
 ```

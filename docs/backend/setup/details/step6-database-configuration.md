@@ -14,37 +14,85 @@ The database settings were already configured in the previous step as part of th
 
 ```python
 # Database configuration for local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'hellobirdie'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# Using our hybrid approach with LOCAL_ prefixes for local environment variables
+
+# Check if we're running in a Docker environment - normalize to bool
+IN_DOCKER = os.environ.get("IN_DOCKER", "").lower() == "true"
+
+# Database URL handling logic
+if IN_DOCKER and os.environ.get("DATABASE_URL"):
+    # Docker environment - use DATABASE_URL from backend/.env
+    DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+elif not IN_DOCKER and os.environ.get("LOCAL_DATABASE_URL"):
+    # Local environment with DATABASE_URL specified in backend/.env
+    DATABASES = {"default": dj_database_url.parse(os.environ.get("LOCAL_DATABASE_URL"))}
+else:
+    # Fallback to individual PostgreSQL configuration parameters
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("LOCAL_POSTGRES_DB", "hellobirdie") if not IN_DOCKER else os.environ.get("POSTGRES_DB", "hellobirdie"),
+            "USER": os.environ.get("LOCAL_POSTGRES_USER", "hellobirdie_user") if not IN_DOCKER else os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("LOCAL_POSTGRES_PASSWORD", "hellobirdie_password") if not IN_DOCKER else os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.environ.get("LOCAL_POSTGRES_HOST", "localhost") if not IN_DOCKER else os.environ.get("POSTGRES_HOST", "db"),
+            "PORT": os.environ.get("LOCAL_POSTGRES_PORT", "5432") if not IN_DOCKER else os.environ.get("POSTGRES_PORT", "5432"),
+        }
     }
-}
 ```
 
 ### Test Environment (test.py)
 
 ```python
 # Database configuration for testing
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'test_hellobirdie'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# Using test suffix for the database name
+
+# Check if we're running in a Docker environment
+IN_DOCKER = os.environ.get('IN_DOCKER', '').lower() == 'true'
+
+# Function to add test suffix to database URL
+def get_test_db_url(url):
+    if not url:
+        return None
+    # Add _test suffix to database name in the URL
+    from urllib.parse import urlparse, urlunparse
+    parsed = urlparse(url)
+    path = parsed.path
+    if path.startswith('/'):
+        path = f"{path}_test"
+    else:
+        path = f"/{path}_test"
+
+    # Reconstruct URL with modified path
+    parts = list(parsed)
+    parts[2] = path  # Update path component
+    return urlunparse(parts)
+
+# Prioritize URLs over individual settings
+if IN_DOCKER and os.environ.get('DATABASE_URL'):
+    # Create test version of Docker database
+    test_db_url = get_test_db_url(os.environ.get('DATABASE_URL'))
+    DATABASES = {'default': dj_database_url.parse(test_db_url)}
+elif not IN_DOCKER and os.environ.get('LOCAL_DATABASE_URL'):
+    # Create test version of local database
+    test_db_url = get_test_db_url(os.environ.get('LOCAL_DATABASE_URL'))
+    DATABASES = {'default': dj_database_url.parse(test_db_url)}
+else:
+    # Fallback to individual PostgreSQL configuration parameters
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_TEST_DB', 'test_hellobirdie') if IN_DOCKER else os.environ.get('LOCAL_POSTGRES_DB', 'hellobirdie_test'),
+            'USER': os.environ.get('LOCAL_POSTGRES_USER', 'hellobirdie_user') if not IN_DOCKER else os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('LOCAL_POSTGRES_PASSWORD', 'hellobirdie_password') if not IN_DOCKER else os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': os.environ.get('LOCAL_POSTGRES_HOST', 'localhost') if not IN_DOCKER else os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': os.environ.get('LOCAL_POSTGRES_PORT', '5432') if not IN_DOCKER else os.environ.get('POSTGRES_PORT', '5432'),
+        }
     }
-}
 ```
 
 ## Creating Initial Migrations
 
-Now that we have configured our database settings, we need to create and apply initial migrations:
+Now that our database configuration is aligned with the dual `.env` strategy developed in steps 2-5, we need to create and apply initial migrations:
 
 ```bash
 # Make sure you're in the backend directory

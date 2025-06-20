@@ -82,9 +82,40 @@ sentry-sdk==1.39.1
 
 ## Environment Variables
 
-### 1. Create Sample Environment File
+### 1. Create Sample Environment Files
+
+To support our hybrid workflow with proper separation of concerns, we'll create two environment files:
+
+1. **Project Root `.env`**: Contains shared infrastructure settings used by Docker Compose and multiple services
+2. **Backend `.env`**: Contains Django-specific settings used only by the backend application
+
+This separation helps maintain clean architecture as the project scales.
+
+#### Project Root Environment Sample
 
 Create a file named `.env.sample` in the project root directory with the following content:
+
+```
+# Docker Compose PostgreSQL settings
+POSTGRES_DB=hellobirdie
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=db  # Service name in Docker Compose
+POSTGRES_PORT=5432
+DOCKER_DB_HOST_PORT=5433  # Port exposed to host
+POSTGRES_TEST_DB=test_hellobirdie
+
+# Docker environment configuration
+# This is automatically set to True in the Docker container via docker-compose.yml
+# IN_DOCKER=True
+
+# Time zone setting
+TZ=UTC
+```
+
+#### Backend Environment Sample
+
+Create a file named `.env.backend.sample` in the backend directory with the following content:
 
 ```
 # Django settings
@@ -93,55 +124,70 @@ DJANGO_ENV=local  # Options: local, test, production
 DJANGO_SECRET_KEY=your-secret-key-here
 DJANGO_DEBUG=True
 
-# Database settings - Hybrid Approach
+# Database URLs for environment detection
 # For Docker environment (used when IN_DOCKER=True)
 DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
-DOCKER_DB_HOST_PORT=5433  # The host port when running in Docker
 
 # For Local Development (default when IN_DOCKER is not set)
 LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie
 
-# Individual Database Components (used in some Django settings configurations)
-# These values are used for local development by default
-POSTGRES_DB=hellobirdie
-POSTGRES_USER=hellobirdie_user  # Updated to match local development user
-POSTGRES_PASSWORD=hellobirdie_password  # Updated to match local development password
-POSTGRES_HOST=localhost  # For local development
-POSTGRES_PORT=5432
-POSTGRES_TEST_DB=test_hellobirdie
-
-# Time zone setting (consistent with Docker configuration)
-TZ=UTC
+# Local database settings (these are used as fallbacks and for tests)
+LOCAL_POSTGRES_DB=hellobirdie
+LOCAL_POSTGRES_USER=hellobirdie_user
+LOCAL_POSTGRES_PASSWORD=hellobirdie_password
+LOCAL_POSTGRES_HOST=localhost
+LOCAL_POSTGRES_PORT=5432
 
 # API settings
 ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-# Updated to include Vite's default port 5173 as mentioned in our diagrams
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173
-
-# Environment detection (used in settings to determine which database URL to use)
-# This is automatically set to True in the Docker container via docker-compose.yml
-# IN_DOCKER=True
 ```
 
-### 2. Create or Update Your Local Environment File
+### 2. Create or Update Your Local Environment Files
 
-Before creating or modifying the .env file, check if one already exists:
+We'll create two environment files: one in the project root for Docker and shared infrastructure settings, and one in the backend directory for Django-specific settings.
+
+#### Project Root Environment File
+
+First, let's check if a root `.env` file already exists:
 
 ```bash
 # From the project root
 if [ -f .env ]; then
-  echo "*** Warning: .env file already exists. Please merge the contents manually. ***"
+  echo "*** Warning: Root .env file already exists. Please merge the contents manually. ***"
   echo "You can use the following command to see what's in the existing file:"
   echo "cat .env"
   echo "And compare with the sample:"
   echo "cat .env.sample"
 else
   cp .env.sample .env
-  echo ".env file created successfully."
+  echo "Root .env file created successfully."
 fi
 ```
 
-> **Important**: If an .env file already exists (possibly created during frontend setup), DO NOT overwrite it. Instead, carefully merge the backend variables into the existing file to avoid losing frontend configuration.
+> **Important**: If a root .env file already exists (possibly created during frontend setup), DO NOT overwrite it. Instead, carefully merge the infrastructure-related variables into the existing file to avoid losing frontend configuration.
+
+#### Backend Environment File
+
+Now, let's create the backend-specific `.env` file:
+
+```bash
+# From the project root
+mkdir -p backend/.env  # Create directory if it doesn't exist
+
+if [ -f backend/.env ]; then
+  echo "*** Warning: Backend .env file already exists. Please merge the contents manually. ***"
+  echo "You can use the following command to see what's in the existing file:"
+  echo "cat backend/.env"
+  echo "And compare with the sample:"
+  echo "cat .env.backend.sample"
+else
+  cp .env.backend.sample backend/.env
+  echo "Backend .env file created successfully."
+fi
+```
+
+> **Important**: Keep Django-specific settings in the backend/.env file and infrastructure settings in the root .env file for proper separation of concerns. This separation will be leveraged in [Step 5: Settings Structure Refactoring](./step5-settings-structure-refactoring.md) when we implement a comprehensive settings structure.
 
 #### How to Safely Merge Environment Variables
 
@@ -190,7 +236,27 @@ Edit the `.env` file to customize the variables based on your local development 
 
 > **Note**: The `.env` file contains sensitive information and should never be committed to version control. The `.env.sample` file serves as a template with safe default values.
 
-### 4.1 Understanding the Dual Database Configuration
+### 4.1 Understanding the Dual Environment Files Strategy
+
+The HelloBirdie project uses a dual environment files strategy for better separation of concerns:
+
+#### Project Root `.env`
+
+- **Purpose**: Shared infrastructure settings used by Docker Compose and multiple services
+- **Location**: Project root directory (`/.env`)
+- **Used By**: Docker Compose, CI/CD pipelines, and shared infrastructure services
+- **Contains**: Database credentials for Docker, infrastructure ports, shared service variables
+- **Why**: Centralized location for Docker Compose variables and easier team collaboration
+
+#### Backend `.env`
+
+- **Purpose**: Django-specific settings used only by the backend
+- **Location**: Backend directory (`/backend/.env`)
+- **Used By**: Django application, tests, and backend-specific scripts
+- **Contains**: Django settings, database URLs, API configuration, authentication secrets
+- **Why**: Clearer separation of concerns, easier maintenance as the project grows
+
+### 4.2 Understanding the Dual Database Configuration
 
 The HelloBirdie project uses a hybrid workflow with a dual database configuration approach:
 
@@ -213,10 +279,10 @@ The HelloBirdie project uses a hybrid workflow with a dual database configuratio
 
 > **Important**: In Step 3, you'll set up both configurations:
 >
-> - The Docker configuration is handled automatically by `docker-compose.yml`
+> - The Docker configuration is handled automatically by `docker-compose.yml` using the project root `.env`
 > - The local PostgreSQL setup requires manual database and user creation (Step 3, Section 5.4)
 >
-> The Django settings will detect which environment you're using and select the appropriate connection string.
+> The Django settings will detect which environment you're using and select the appropriate connection string from the backend `.env` file.
 
 ### 4.2 Environment Variables in a Full-Stack Project
 
