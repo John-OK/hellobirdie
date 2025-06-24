@@ -180,9 +180,9 @@ if [ -f backend/.env ]; then
   echo "You can use the following command to see what's in the existing file:"
   echo "cat backend/.env"
   echo "And compare with the sample:"
-  echo "cat .env.backend.sample"
+  echo "cat backend/.env.backend.sample"
 else
-  cp .env.backend.sample backend/.env
+  cp backend/.env.backend.sample backend/.env
   echo "Backend .env file created successfully."
 fi
 ```
