@@ -110,10 +110,9 @@ ENV/
 
 # Environment variables
 .env
-.env.local
-.env.development
-.env.test
-.env.production
+backend/.env
+.env.sample
+backend/.env.sample
 ```
 
 ### If Merging with an Existing .gitignore

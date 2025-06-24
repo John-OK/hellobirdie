@@ -108,7 +108,7 @@ Implement a health check endpoint following TDD principles. For detailed impleme
 
 ### 5. Settings Structure Refactoring (REFACTOR Phase)
 
-Follow the [Step 5: Settings Structure Refactoring](./details/step5-settings-structure-refactoring.md) guide to properly refactor the minimal settings structure created in Step 2:
+Follow the [Step 5: Settings Structure Refactoring](./details/step5-settings-structure-refactoring.md) guide to properly refactor the minimal settings structure created in Step 3:
 
 - Expand the settings directory structure
   ```

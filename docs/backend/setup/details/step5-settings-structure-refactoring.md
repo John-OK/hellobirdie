@@ -4,7 +4,7 @@ This guide provides detailed instructions for refactoring the Django settings st
 
 ## Overview
 
-In Step 2 (Environment Configuration), we created a minimal settings structure to support Docker testing. Now we'll enhance and properly organize this structure following best practices.
+In Step 3 (Django Project Initialization), we created a minimal settings structure to support Docker testing. Now we'll enhance and properly organize this structure following best practices.
 
 ## Split Settings Approach
 
@@ -12,9 +12,9 @@ For the HelloBirdie project, we're using a split settings approach with three ma
 
 ```
 settings/
-├── __init__.py  # Settings loader (already created in Step 2)
+├── __init__.py  # Settings loader (already created in Step 3)
 ├── base.py      # Common settings
-├── local.py     # Development settings (enhance the minimal version from Step 2)
+├── local.py     # Development settings (enhance the minimal version from Step 3)
 └── test.py      # Test-specific settings
 ```
 
@@ -48,7 +48,7 @@ settings/
 
 ### 1. Enhance the Minimal Settings Structure
 
-The directory structure should already exist from Step 2. If not, create it with:
+The directory structure should already exist from Step 3. If not, create it with:
 
 ```bash
 # From the backend directory
@@ -137,11 +137,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ### 3. Enhance Local Settings (local.py)
 
-Enhance the minimal `local.py` file created in Step 2 with more complete development-specific settings:
+**Note**: This will completely replace the minimal version of `local.py` created in Step 3 with a more comprehensive implementation that better handles database connections for our hybrid workflow:
 
 ```python
 # hellobirdie/settings/local.py
 import os
+import dj_database_url
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -149,45 +150,95 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# Database
-# Use PostgreSQL for local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'hellobirdie'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# Check if we're running in a Docker environment - normalize to bool
+IN_DOCKER = os.environ.get("IN_DOCKER", "").lower() == "true"
+
+# Database configuration with hybrid approach
+# 1. In Docker: Use DATABASE_URL
+# 2. Local with URL: Use LOCAL_DATABASE_URL
+# 3. Fallback: Use individual parameters
+
+if IN_DOCKER and os.environ.get("DATABASE_URL"):
+    # Docker environment - use DATABASE_URL
+    DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+elif not IN_DOCKER and os.environ.get("LOCAL_DATABASE_URL"):
+    # Local environment with DATABASE_URL specified
+    DATABASES = {"default": dj_database_url.parse(os.environ.get("LOCAL_DATABASE_URL"))}
+else:
+    # Fallback to individual PostgreSQL configuration parameters
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("LOCAL_POSTGRES_DB", "hellobirdie") if not IN_DOCKER else os.environ.get("POSTGRES_DB", "hellobirdie"),
+            "USER": os.environ.get("LOCAL_POSTGRES_USER", "hellobirdie_user") if not IN_DOCKER else os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("LOCAL_POSTGRES_PASSWORD", "hellobirdie_password") if not IN_DOCKER else os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.environ.get("LOCAL_POSTGRES_HOST", "localhost") if not IN_DOCKER else os.environ.get("POSTGRES_HOST", "db"),
+            "PORT": os.environ.get("LOCAL_POSTGRES_PORT", "5432") if not IN_DOCKER else os.environ.get("POSTGRES_PORT", "5432"),
+        }
     }
-}
 ```
 
 ### 4. Create Test Settings (test.py)
+
+**Note**: This file is created from scratch during the settings refactoring process, as it wasn't part of the minimal settings structure:
 
 Create a file named `test.py` in the `backend/hellobirdie/settings/` directory with the following content:
 
 ```python
 # hellobirdie/settings/test.py
 import os
+import dj_database_url
 from .base import *
 
 DEBUG = False
 
-# Check if we're running in a Docker environment
-IN_DOCKER = os.environ.get('IN_DOCKER', False)
+# Normalize IN_DOCKER to bool
+IN_DOCKER = os.environ.get('IN_DOCKER', '').lower() == 'true'
 
-# Use PostgreSQL for tests to match production
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'test_hellobirdie'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db' if IN_DOCKER else 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# Test database configuration with hybrid approach, similar to local.py
+# 1. In Docker: Use DATABASE_URL with test suffix
+# 2. Local with URL: Use LOCAL_DATABASE_URL with test suffix
+# 3. Fallback: Use individual parameters with test database name
+
+# Function to add test suffix to database URL
+def get_test_db_url(url):
+    if not url:
+        return None
+    # Add _test suffix to database name in the URL
+    from urllib.parse import urlparse, parse_qs
+    parsed = urlparse(url)
+    path = parsed.path
+    if path.startswith('/'):
+        path = f"{path}_test"
+    else:
+        path = f"/{path}_test"
+
+    # Reconstruct URL with modified path
+    parts = list(parsed)
+    parts[2] = path  # Update path component
+    return urlunparse(parts)
+
+# Prioritize URLs over individual settings
+if IN_DOCKER and os.environ.get('DATABASE_URL'):
+    # Create test version of Docker database
+    test_db_url = get_test_db_url(os.environ.get('DATABASE_URL'))
+    DATABASES = {'default': dj_database_url.parse(test_db_url)}
+elif not IN_DOCKER and os.environ.get('LOCAL_DATABASE_URL'):
+    # Create test version of local database
+    test_db_url = get_test_db_url(os.environ.get('LOCAL_DATABASE_URL'))
+    DATABASES = {'default': dj_database_url.parse(test_db_url)}
+else:
+    # Fallback to individual PostgreSQL configuration parameters
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_TEST_DB', 'test_hellobirdie') if IN_DOCKER else os.environ.get('LOCAL_POSTGRES_DB', 'hellobirdie_test'),
+            'USER': os.environ.get('LOCAL_POSTGRES_USER', 'hellobirdie_user') if not IN_DOCKER else os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('LOCAL_POSTGRES_PASSWORD', 'hellobirdie_password') if not IN_DOCKER else os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': os.environ.get('LOCAL_POSTGRES_HOST', 'localhost') if not IN_DOCKER else os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': os.environ.get('LOCAL_POSTGRES_PORT', '5432') if not IN_DOCKER else os.environ.get('POSTGRES_PORT', '5432'),
+        }
     }
-}
 
 # Faster password hashing for tests
 PASSWORD_HASHERS = [
@@ -261,7 +312,7 @@ POSTGRES_PORT=5432
 > ```bash
 > # Check if .gitignore covers nested .env files
 > grep -E '\.env$|backend/\.env' .gitignore
-> 
+>
 > # If not found, add it to .gitignore
 > echo 'backend/.env' >> .gitignore
 > ```

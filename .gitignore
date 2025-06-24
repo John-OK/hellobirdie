@@ -102,3 +102,15 @@ media/
 .venv/
 venv/
 ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment variables
+.env
+backend/.env
+.env.sample
+backend/.env.sample
