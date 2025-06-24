@@ -173,7 +173,7 @@ Now, let's create the backend-specific `.env` file:
 
 ```bash
 # From the project root
-mkdir -p backend/.env  # Create directory if it doesn't exist
+mkdir -p backend  # Make sure backend directory exists
 
 if [ -f backend/.env ]; then
   echo "*** Warning: Backend .env file already exists. Please merge the contents manually. ***"
