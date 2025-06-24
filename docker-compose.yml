@@ -8,12 +8,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_ENV=development
-      - DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
-      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
-      - IN_DOCKER=True
-      - TZ=UTC
+      - DJANGO_ENV=local # Must match the environment name used in settings/__init__.py
+      # Do not set DJANGO_SETTINGS_MODULE here - allow __init__.py to handle it based on DJANGO_ENV
+      - IN_DOCKER=True # Helps settings determine correct database host
+    env_file:
+      - ./backend/.env # Load backend-specific environment variables
     depends_on:
       - db
 
