@@ -58,7 +58,7 @@ touch hellobirdie/settings/__init__.py
 
 ### 2. Create Base Settings (base.py)
 
-Create a file named `base.py` in the `backend/hellobirdie/settings/` directory with the following content (copied from the core settings in your existing `settings.py` file):
+Create a file named `base.py` in the `backend/hellobirdie/settings/` directory with the following common settings that will be shared across all environments:
 
 ```python
 # hellobirdie/settings/base.py
@@ -180,8 +180,6 @@ else:
 
 ### 4. Create Test Settings (test.py)
 
-**Note**: This file is created from scratch during the settings refactoring process, as it wasn't part of the minimal settings structure:
-
 Create a file named `test.py` in the `backend/hellobirdie/settings/` directory with the following content:
 
 ```python
@@ -205,7 +203,7 @@ def get_test_db_url(url):
     if not url:
         return None
     # Add _test suffix to database name in the URL
-    from urllib.parse import urlparse, parse_qs
+    from urllib.parse import urlparse, urlunparse, parse_qs
     parsed = urlparse(url)
     path = parsed.path
     if path.startswith('/'):
@@ -273,7 +271,7 @@ else:
 
 ### 6. Update WSGI and ASGI Configuration
 
-Update `wsgi.py` and `asgi.py` to use the new settings module:
+Update `wsgi.py` and `asgi.py` in `backend/hellobirdie/` to use the new settings module:
 
 ```python
 # hellobirdie/wsgi.py
@@ -293,45 +291,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hellobirdie.settings')
 application = get_asgi_application()
 ```
 
-### 7. Create Backend-Specific .env File
-
-Create a `.env` file in the `backend` directory to store environment variables:
-
-```
-DJANGO_ENV=local
-DJANGO_SECRET_KEY=your-secret-key-here
-POSTGRES_DB=hellobirdie
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-```
-
-> **Security Reminder**: Ensure your backend `.env` file is explicitly listed in `.gitignore` to prevent sensitive credentials from being committed to version control. The project root's `.gitignore` likely already includes a general `.env` entry, but you should verify it also covers nested `.env` files:
->
-> ```bash
-> # Check if .gitignore covers nested .env files
-> grep -E '\.env$|backend/\.env' .gitignore
->
-> # If not found, add it to .gitignore
-> echo 'backend/.env' >> .gitignore
-> ```
->
-> This step is critical because many `.gitignore` templates only exclude `.env` files in the root directory, not in subdirectories.
-
-#### Why a Backend-Specific .env File?
-
-While we already created a project-root `.env` file in Step 2, creating a backend-specific `.env` file offers several advantages:
-
-1. **Separation of Concerns**: Backend-specific variables stay with the backend code
-2. **Deployment Flexibility**: The backend can be deployed independently with its own environment
-3. **Development Isolation**: Backend developers can modify their environment without affecting frontend settings
-4. **Clearer Organization**: Variables are located closer to where they're used
-5. **Reduced Conflicts**: Minimizes merge conflicts in multi-developer environments
-
-This approach follows the principle of keeping configuration close to the code that uses it, making the project more maintainable as it grows.
-
-### 8. Test the Refactored Settings
+### 7. Test the Refactored Settings
 
 Run tests to ensure the refactoring didn't break functionality:
 
@@ -351,13 +311,13 @@ Following our hybrid approach, also verify in Docker before committing:
 
 ```bash
 # From the project root
-docker-compose up -d
+docker compose up -d
 
 # Run tests in the Docker container
-docker-compose exec backend python manage.py test api.tests.test_health
+docker compose exec backend python manage.py test api.tests.test_health
 
 # Or with test settings explicitly
-docker-compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.test_health"
+docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.test_health"
 ```
 
 This ensures tests pass in both local and Docker environments, which is essential for our hybrid testing workflow.
