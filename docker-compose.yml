@@ -6,7 +6,7 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "8000:8000"
+      - "8001:8000"  # Using port 8001 on host to avoid conflicts with local development server
     environment:
       - DJANGO_ENV=local # Must match the environment name used in settings/__init__.py
       # Do not set DJANGO_SETTINGS_MODULE here - allow __init__.py to handle it based on DJANGO_ENV
