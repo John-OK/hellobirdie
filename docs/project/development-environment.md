@@ -8,6 +8,8 @@
   > Latest stable version with optimized performance and security features
 - PostgreSQL 17.4
   > Latest stable version for local database development
+- nvm 0.40.1
+  > Node Version Manager for installing and managing Node.js versions
 - Node.js 22.14.0 (LTS)
   > Latest Long Term Support version for optimal stability and security
 - Git
@@ -24,6 +26,38 @@
 - Postman or Insomnia for API testing
 
 > Note: We use a hybrid development approach where daily development happens in the local environment and Docker is used for verification before commits. This approach provides faster development cycles and a better learning experience.
+
+## Database Setup
+
+### PostgreSQL Configuration
+
+Before running the backend, you need to set up the PostgreSQL database:
+
+```bash
+# Connect to PostgreSQL as a superuser
+# You will be prompted to enter a password. Use the password for your account on the current machine.
+sudo -u postgres psql
+
+# Inside the PostgreSQL prompt, create the user and database
+CREATE USER hellobirdie_user WITH PASSWORD 'hellobirdie_password';
+CREATE DATABASE hellobirdie OWNER hellobirdie_user;
+
+# Grant necessary privileges
+GRANT ALL PRIVILEGES ON DATABASE hellobirdie TO hellobirdie_user;
+
+# Exit PostgreSQL prompt
+\q
+```
+
+### Verify Database Connection
+
+After setting up your database, you can verify the connection using:
+
+```bash
+psql -U hellobirdie_user -h localhost -d hellobirdie
+```
+
+Enter the password when prompted ('hellobirdie_password').
 
 ## TypeScript Development Setup
 

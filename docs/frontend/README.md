@@ -18,6 +18,13 @@ This directory contains documentation specific to the HelloBirdie frontend imple
 
 ## Technology Stack
 
+### Runtime Environment
+
+- nvm 0.40.1
+- Node.js 22.14.0 (LTS)
+
+### Core Libraries
+
 - TypeScript 5.7.3
 - React 18.3
 - Vite 6.1.0

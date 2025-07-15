@@ -5,7 +5,7 @@
 ## Health Check
 
 ```
-GET /api/health
+GET /api/health-check
 ```
 
 Returns the API health status.

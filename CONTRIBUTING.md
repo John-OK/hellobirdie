@@ -223,7 +223,7 @@ Use the following format for all logging:
 
 ## Development Setup
 
-See [Development Environment Setup](/docs/setup/development-environment.md) for detailed instructions.
+See [Development Environment Setup](/docs/project/development-environment.md) for detailed instructions.
 
 ## Code of Conduct
 
