@@ -5,7 +5,9 @@ class Bird(models.Model):
     # required fields
     genus = models.CharField(max_length=50, null=False)
     species = models.CharField(max_length=50, null=False)
-    english_name = models.CharField(max_length=75, null=False)
+    english_name = models.CharField(
+        max_length=75, null=False, verbose_name="English Name"
+    )
 
     # optional fields
     subspecies = models.CharField(max_length=50, null=True)
