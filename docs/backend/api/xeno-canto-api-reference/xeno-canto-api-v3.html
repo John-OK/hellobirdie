@@ -1,0 +1,666 @@
+
+            <!doctype html>
+            <html>
+            <head>
+            <title>API :: xeno-canto</title>
+
+            <meta charset='utf-8'>
+            <meta name='robots' content='index,follow'>
+            <meta name='keywords' content='bird songs, bird sounds, grasshopper sounds, wildlife sounds, mammal sounds, frog sounds, bat sounds, xc, xeno-canto'>
+
+            <link rel='icon' type='image/png' href='/static/img/favicon.png'>
+            <link rel='apple-touch-icon' type='image/png' href='/static/img/favicon-60.png'>
+            <link rel='apple-touch-icon' type='image/png' href='/static/img/favicon-76.png' sizes='76x76'>
+            <link rel='apple-touch-icon' type='image/png' href='/static/img/favicon-120.png' sizes='120x120'>
+            <link rel='apple-touch-icon' type='image/png' href='/static/img/favicon-152.png' sizes='152x152'>
+
+            <link rel='stylesheet' href='/static/js/jquery.fancybox.css?v4-9-2' type='text/css'>
+<link rel='stylesheet' href='/static/js/jquery.qtip.min.css?v4-9-2' type='text/css'>
+<link rel='stylesheet' href='/static/js/jplayer/xcplayer.css?v4-9-2' type='text/css'>
+<link rel='stylesheet' href='/static/css/xeno-canto.css?v4-9-2' type='text/css'>
+<link rel='stylesheet' href='//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu+Condensed' type='text/css'>
+
+
+            <!-- this needs to be in the header -->
+            <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+            <script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js "></script>
+        
+            
+                
+            </head>
+            <body id='about-api'>
+            <header class=''>
+            <div id='banner'>
+            <hgroup id='logo'>
+            <h1><a href='https://xeno-canto.org/'>xeno-canto</a></h1>
+            <h2>Sharing wildlife sounds from around the world</h2>
+            </hgroup>
+        <script type='text/javascript'>
+        function showSpeciesNr(value, data)
+        {
+            jQuery('#species_nr').val(data.species_nr);
+            jQuery('#quick-search-bar > form').submit();
+        }
+        </script>
+        <div id='quick-search-bar'>
+            <form action='https://xeno-canto.org/explore' class='species-completion' method='post' autocomplete='off'>
+                <input type='hidden' id='species_nr' name='species_nr' value=''/>
+                <div class='search-box'>
+                  <input id='quick-search-input' class='species-input' data-onselect='showSpeciesNr' type='text' name='query' value='' placeholder='Search recordings...' />
+            <input type='submit' value='Search'/>
+        </div>
+          </form>
+          <div class='search-help'>
+          <ul class='simple'>
+          <li>
+          <a href='https://xeno-canto.org/search'>Advanced Search</a>
+          </li>
+          <li>
+          <a
+          href='https://xeno-canto.org/help/search'
+            class='tooltip'
+            data-qtip-header='Quick Search Reference'
+            data-qtip-content='&lt;table class=&#039;key-value&#039;&gt;
+            &lt;tr&gt;&lt;td&gt;grp:&lt;/td&gt;&lt;td&gt;Group&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;gen:&lt;/td&gt;&lt;td&gt;Genus&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;ssp:&lt;/td&gt;&lt;td&gt;Subspecies&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;rec:&lt;/td&gt;&lt;td&gt;Recordist&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;cnt:&lt;/td&gt;&lt;td&gt;Country&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;loc:&lt;/td&gt;&lt;td&gt;Location&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;rmk:&lt;/td&gt;&lt;td&gt;Recordist remarks&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;seen:&lt;/td&gt;&lt;td&gt;Animals seen&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;playback:&lt;/td&gt;&lt;td&gt;Playback used&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;also:&lt;/td&gt;&lt;td&gt;Background species&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;type:&lt;/td&gt;&lt;td&gt;Predefined sound type&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;sex:&lt;/td&gt;&lt;td&gt;Sex&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;stage:&lt;/td&gt;&lt;td&gt;Life stage&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;method:&lt;/td&gt;&lt;td&gt;Recording method&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;nr:&lt;/td&gt;&lt;td&gt;XC number&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;lic:&lt;/td&gt;&lt;td&gt;Recording license&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;q:&lt;/td&gt;&lt;td&gt;Recording quality&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;len:&lt;/td&gt;&lt;td&gt;Recording length (in s)&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td colspan=&#039;2&#039; style=&#039;padding-top: 8px;&#039;&gt;&lt;a href=&#039;https://xeno-canto.org/help/search&#039;&gt;All options explained...&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;/table&gt;'>Tips</a>
+          </li>
+          </div>
+        </div>
+      </div>
+      <nav id='main-menu'>
+      <table>
+      <tr>
+      <td>
+      <ul class='sf-menu'>
+        <li>About<img class='icon' height='14' width='14' src='/static/img/down.png'/>
+        <ul>
+        <li><a href='https://xeno-canto.org/about/xeno-canto'>About xeno-canto</a></li>
+        <li><a href='https://xeno-canto.org/collection/'>Collection Details</a></li>
+        <li><a href='https://xeno-canto.org/explore/api'>API</a></li>
+        <li><a href='https://xeno-canto.org/contributors'>Meet the Members</a></li>
+        <li><a href='https://xeno-canto.org/help/FAQ'>Frequently Asked Questions</a></li>
+        <li><a href='https://xeno-canto.org/about/terms'>Terms of Use</a></li>
+        <li><a href='https://xeno-canto.org/about/credits'>Credits & Colofon</a></li> 
+        </ul>
+        </li>
+        <li>Explore<img class='icon' height='14' width='14' src='/static/img/down.png'/>
+        <ul>
+          <li><a href='https://xeno-canto.org/explore/region'>By Region</a></li>
+          <li><a href='https://xeno-canto.org/explore/taxonomy'>By Taxonomy</a></li>
+          <li><a href='https://xeno-canto.org/explore?query=since:31&dir=0&order=xc'>Recent Recordings</a></li>
+          <li><a href='https://xeno-canto.org/explore/random'>Random Recordings</a></li>
+         </ul>
+        </li>
+        <li><a href='https://xeno-canto.org/upload'>Upload Sounds</a></li>
+        <li><a href='https://xeno-canto.org/forum/'>Forum</a></li>
+        <li><a href='https://xeno-canto.org/mysteries'>Mysteries</a></li>
+        <li><a href='https://xeno-canto.org/articles'>Articles</a></li>
+        </ul>
+        </td>
+        <td style='white-space: nowrap; text-align: right'>
+            <ul class='sf-menu right'>
+            <li>
+            <a href='https://xeno-canto.org/auth/login'>Log in / Register</a>
+            </li>
+            </ul>
+        </td>
+        </tr>
+        </table>
+        </nav>
+        </header>
+        
+        <div id='content-area'>
+        <noscript>
+        <div class='warning'><b>Note</b>: Many features of this site will not work without javascript</div>
+        </noscript>
+        
+            <h1>Application Programming Interface (API v3)</h1> 
+            
+            <p class='important' style='margin: 15px 0;'>This documentation refers to the latest version of the XC API. API v3 
+            has <strong>breaking changes</strong> compared the previous version of the API, so make sure to read
+            this documentation carefully. 
+            The previous version of the API (v2) will be in operation until <strong>October 10, 2025</strong>. If necessary, 
+            you can still access <a href='https://xeno-canto.org/explore/api/previous'>its documentation</a>.</p>   
+            
+            <p>In the original version of Xeno-canto, a very simple web service was provided. In 2013, 
+             a more full-featured, RESTful JSON-based API was introduced. Over the years, both the search options and the
+             data returned by API v2 were greatly expanded.</p>
+             
+            <p>The downside of a popular API is that its use may negatively
+             affect general web site performance. This forced us to add a rate limiter. Another factor affecting performance 
+             was the use of generic simple search terms. These are well-suited for the site's general search option, but an API 
+             is best served with precise queries. Finally, unrestricted access to the API also contributed to degraded performance.</p>
+            
+            <p>Creating a new v3 of the API allowed us to address these issues and more:
+            <ul>
+                <li>The API only accepts <a href='https://xeno-canto.org/help/search#advanced'>search tags</a> for its queries. 
+                Existing and several new tags allow the user to exactly define the query, greatly increasing both 
+                general performance and the quality of the search results. Example API queries demonstrating
+                new and previously existing search tags are listed under <a href='#examples'>Examples</a>.</li>
+                <li>The API now requires an API key. Every XC member with a verified email address already has one. 
+                You can look up yours on your <a href='https://xeno-canto.org/account'>account page</a>. If you intend to use the API but don't 
+                have an account yet, you will need to register first to use API v3.</li>
+                <li>The default number of results per page has been reduced from 500 to 100. You can use
+                the new parameter <code>per_page</code> to adjust this from 50 to 500 results per page.</li>
+                <li>We have addressed a few inconsistencies between search tags and properties of the recording object in the
+                search results. Make sure to read the <a href='#changes'>Changes</a> section if you are upgrading from API v2.</li>
+                <li>As we trust these measures to improve performance of the API and the web site in general, we have lifted
+                the strict rate limit on the API.</li>
+            </ul>
+            
+            </p>
+            
+            
+            <h1>Request</h1>
+            
+            <p>The endpoint for the webservice is at <a href='https://xeno-canto.org/api/3/recordings'>https://xeno-canto.org/api/3/recordings</a>.</p>
+            
+            <h2>Query Parameters</h2>
+            
+            <p>There are four possible query parameters for this API.</p>
+            
+            <p>The <span class='code strong'>query</span> parameter
+            is <em>required</em> and must be non-empty. The query parameter must be a search string in the format described 
+            on the <a href='https://xeno-canto.org/help/search'>search tips</a> page.</p>
+              
+            <p>The <span class='code strong'>key</span> parameter is new to API v3
+            and is <em>required</em> and must be non-empty as well. A key is available to all 
+            <a href='https://xeno-canto.org/account'>registered XC members</a> who have verified their email address. 
+            Do not share your key with others and take care not to publish it in any git repositories, 
+            as prolonged abuse of the API may result in a warning and ultimately in revocation of your key. 
+            If you have accidentally shared your key, please 
+            <script>
+            document.write(
+                "<n uers=\"znvygb:pbagnpg@krab-pnagb.bet?fhowrpg=NCV%20xrl%20erfrg%20erdhrfg\" ery=\"absbyybj\">pbagnpg gur nqzvaf</n>" .
+                replace(/[a-zA-Z]/g, 
+                    function(c) {
+                        return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+                    }
+                )
+            )
+            </script>
+         for a new one.</p>
+            
+            <span class='important' style='display: inline-block;'>Developers building applications on the XC API are encouraged to create a key
+            for their app rather than to use a personal key.</span>
+ 
+            <p>The <span class='code strong'>per_page</span> parameter is <em>optional</em>, determining the number
+            of results per page. Valid values for this parameter range between 50 and 500, 
+            with a default of 100 when not provided.</p>
+            
+            <p>The <span class='code strong'>page</span> parameter is <em>optional</em> as well and 
+            is only needed if the results from a given search don't fit in a single page. 
+            If specified, <span class='code'>page</span> must be an integer between 1 and 
+            <span class='code'>results.numPages</span> (see results format below for details).</p>
+            
+            <h1>Response</h1>
+            <p>The response is
+            returned with a payload in <a href='http://en.wikipedia.org/wiki/JSON'>JSON</a>
+            format.  The details are shown below.</p>
+           
+            <h2>Success</h2>
+            <p>For a successful  query, a HTTP 200 response code will be returned, with a payload in
+            the following format:</p>
+            <pre>
+            <code> 
+            {
+                "numRecordings": "1",
+                "numSpecies": "1",
+                "page": 1,
+                "numPages": 1,
+                "recordings": [
+                    ...,
+                    Array of Recording objects (see below),
+                    ...
+                ]
+            }
+            </code>
+            </pre>            
+            <p>This JSON object
+            will contain details about the recordings found with the given query.
+            For performance reasons, the number of recordings returned for a
+            given query will be limited.  If the limit is lower than the total
+            number of results, they will be split into 'pages'.  To fetch the
+            next page of results, you must append the <span class='code'>page</span> query parameter as
+            specified above.</p>
+            <p>A brief description of the fields:</p>
+            <ul>
+                <li><span class='code strong'>numRecording</span>: the total number of recordings found for this query</li>
+                <li><span class='code strong'>numSpecies</span>: the total number of species found for this query</li>
+                <li><span class='code strong'>page</span>: the page number of the results page that is being displayed</li>
+                <li><span class='code strong'>numPages</span>: the total number of pages available for this query</li>
+                <li><span class='code strong'>recordings</span>: an array of recording objects, described in detail below</li>
+            </ul>
+           
+            <h2>Recording Object</h2>
+            <p>Each object in the
+            <span class='code'>recordings</span> array mentioned above has the following format:</p>
+            <pre>
+            <code>
+            {
+                "id": "694038",
+                "gen": "Troglodytes",
+                "sp": "troglodytes",
+                "ssp": "",
+                "grp": "birds",
+                "en": "Eurasian Wren",
+                "rec": "Jacobo Ramil MIllarengo",
+                "cnt": "Spain",
+                "loc": "Sisalde, Ames, A Coru\u00f1a, Galicia",
+                "lat": "42.8373",
+                "lon": "-8.652",
+                "alt": "30",
+                "type": "song",
+                "sex": "male",
+                "stage": "adult",
+                "method": "field recording",
+                "url": "\/\/xeno-canto.org\/694038",
+                "file": "\/\/xeno-canto.org\/694038\/download",
+                "file-name": "XC694038-211223_02Carrizo variaci\u00f3ns dunha frase bastante stereotipada siteD 9.30 Sisalde.mp3",
+                "sono": {
+                    "small": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/ffts\/XC694038-small.png",
+                    "med": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/ffts\/XC694038-med.png",
+                    "large": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/ffts\/XC694038-large.png",
+                    "full": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/ffts\/XC694038-full.png"
+                },
+                "osci": {
+                    "small": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/wave\/XC694038-small.png",
+                    "med": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/wave\/XC694038-med.png",
+                    "large": "\/\/xeno-canto.org\/sounds\/uploaded\/LHCOINSOBZ\/wave\/XC694038-large.png"
+                },
+                "lic": "\/\/creativecommons.org\/licenses\/by-nc-sa\/4.0\/",
+                "q": "A",
+                "length": "4:08",
+                "time": "09:30",
+                "date": "2021-12-23",
+                "uploaded": "2021-12-27",
+                "also": [
+                    "Turdus viscivorus",
+                    "Turdus iliacus",
+                    "Parus major"
+                ],
+                "rmk": "A male repeat a stereotyped phrase with few syllabic variation. HPF 270 Hz. It\u00b4s raining.",
+                "animal-seen": "yes",
+                "playback-used": "no",
+                "temp": "",
+                "regnr": "",
+                "auto": "unknown",
+                "dvc": "",
+                "mic": "",
+                "smp": "44100"
+            }
+            </code>
+            </pre>
+            <p>The following is a detailed description of the fields of this object:</p>
+            <ul>
+                <li><span class='code strong'>id</span>: the catalogue number of the recording on xeno-canto</li>
+                <li><span class='code strong'>gen</span>: the generic name of the species</li>
+                <li><span class='code strong'>sp</span>: the specific name (epithet) of the species</li>
+                <li><span class='code strong'>ssp</span>: the subspecies name (subspecific epithet)</li>
+                <li><span class='code strong'>grp</span>: the group to which the species belongs (birds, grasshoppers, bats)</li>
+                <li><span class='code strong'>en</span>: the English name of the species</li>
+                <li><span class='code strong'>rec</span>: the name of the recordist</li>
+                <li><span class='code strong'>cnt</span>: the country where the recording was made</li>
+                <li><span class='code strong'>loc</span>: the name of the locality</li>
+                <li><span class='code strong'>lat</span>: the latitude of the recording in decimal coordinates</li>
+                <li><span class='code strong'>lng</span>: the longitude of the recording in decimal coordinates</li>
+                <li><span class='code strong'>type</span>: the sound type of the recording (combining both predefined 
+                terms such as 'call' or 'song' and additional free text options)</li>
+                <li><span class='code strong'>sex</span>: the sex of the animal</li>
+                <li><span class='code strong'>stage</span>: the life stage of the animal (adult, juvenile, etc.)</li>
+                <li><span class='code strong'>method</span>: the recording method (field recording, in the hand, etc.)</li>
+                <li><span class='code strong'>url</span>: the URL specifying the details of this recording</li>
+                <li><span class='code strong'>file</span>: the URL to the audio file</li>
+                <li><span class='code strong'>file-name</span>: the original file name of the audio file</li>
+                <li><span class='code strong'>sono</span>: an object with the urls to the four versions of sonograms</li>
+                <li><span class='code strong'>osci</span>: an object with the urls to the three versions of oscillograms</li>
+                <li><span class='code strong'>lic</span>: the URL describing the license of this recording</li>
+                <li><span class='code strong'>q</span>: the current quality rating for the recording</li>
+                <li><span class='code strong'>length</span>: the length of the recording in minutes</li>
+                <li><span class='code strong'>time</span>: the time of day that the recording was made</li>
+                <li><span class='code strong'>date</span>: the date that the recording was made</li>
+                <li><span class='code strong'>uploaded</span>: the date that the recording was uploaded to xeno-canto</li>
+                <li><span class='code strong'>also</span>: an array with the identified background species in the recording</li>
+                <li><span class='code strong'>rmk</span>: additional remarks by the recordist</li>
+                <li><span class='code strong'>animal-seen</span>: was the recorded animal seen?</li>
+                <li><span class='code strong'>playback-used</span>: was playback used to lure the animal?</li> 
+                <li><span class='code strong'>temp</span>: temperature during recording (applicable to specific groups only)</li>
+                <li><span class='code strong'>regnr</span>: registration number of specimen (when collected)</li>
+                <li><span class='code strong'>auto</span>: automatic (non-supervised) recording?</li>
+                <li><span class='code strong'>dvc</span>: recording device used</li>
+                <li><span class='code strong'>mic</span>: microphone used</li>
+                <li><span class='code strong'>smp</span>: sample rate</li>
+            </ul>
+            <h2>Error</h2>
+            <p>In case of an error,
+            a HTTP 400 or 500 response code will be returned (depending on
+            whether the error was a client or server error).  The payload
+            returned will be of the following form:</p>
+            <pre>
+            <code>
+            {
+                "error": {
+                    "code":"missing_parameter",
+                    "message":"No query specified"
+                }
+            }            
+            </code>
+            </pre>
+            <p>The <span class='code'>code</span> parameter
+            will be an identifier for the error, and <span class='code'>message</span> will offer some
+            additional explanatory details.</p>
+            
+            <a name='examples'></a>
+            <h1>Examples</h1>
+            
+            <p>The API uses (a combination of) search tags to precisely define the query. It's a good idea to  
+            <a href='https://xeno-canto.org/help/search#advanced'>familiarize yourself</a> with the options these tags provide, as their
+            use isn't exactly straightforward!</p>
+            
+            <p>Before diving into the examples, we need to reiterate that searching for species without tags 
+            (as was the default for API v2) is now <strong>discontinued</strong>. Another important fact to bare in mind is that 
+            you <strong>must quote search tags</strong> consisting of multiple terms, or terms using operators (=, &lt; or &gt;). 
+            Again, see <a href='https://xeno-canto.org/help/search#advanced'>Search tips</a> for more information. Finally, in API v3 
+            you will need to append your key to every API call. Off to a rough start, as these three examples fail:
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=larus fuscus&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=larus fuscus&amp;key=demo</a> (API v2 style query without tags -> <strong>throws an error</strong>)</li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=sp:larus fuscus&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=sp:larus fuscus&amp;key=demo</a> (unquoted, resolving into a 'tag-less' query for fuscus -> <strong>throws an error</strong>)</li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=sp:"larus fuscus"'>https://xeno-canto.org/api/3/recordings?query=sp:"larus fuscus"</a> (correctly quoted, but no key provided -> <strong>throws an error</strong>)</li>
+            </ul>
+            </p>
+
+            <h2>Taxonomic examples</h2>
+            <h3>sp, gen</h3>
+            
+            <p>Likely the most often used API call is to fetch recordings for a specific species. While in API v2 this was done by just
+            providing the species name without tags, in v3 this requires the <span class='code strong'>sp</span> tag (for species)
+            or combination of <span class='code strong'>gen</span> (for genus) and <span class='code strong'>sp</span> tags. 
+            The <span class='code strong'>sp</span> tag can be used for a complete species name (remember: between quotes); 
+            in combination with a <span class='code strong'>gen</span> tag (resulting in essentially the same query); or
+            for just the specific epithet.</p>
+             
+            <p>Moving on to working examples, both
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=sp:"larus fuscus"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=sp:"larus fuscus"&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=gen:larus+sp:fuscus&amp;per_page=50&amp;page=3&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=gen:larus+sp:fuscus&amp;per_page=50&amp;page=3&amp;key=demo</a></li>
+            </ul>
+            will fetch all recordings for just the Lesser Black-backed Gull <em>Larus fuscus</em> (the second also demonstrating the use of the 
+            pagination parameters), while
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=sp:fuscus&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=sp:fuscus&amp;key=demo</a></li>
+            </ul>
+            will also feature results for (among others) the South American White-lipped Grassfrog <em>Leptodactylus fuscus</em> and
+            the Big Brown Bat <em>Eptesicus fuscus</em>. Needless to say, the <span class='code strong'>gen</span> tag can also
+            be used independently to fetch all recordings for a specific genus.
+            </p>
+            
+            <h3>grp</h3>
+            
+            <p>If you want to narrow down the previous example to just birds, you can add the <span class='code strong'>grp</span> tag. Thus
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=sp:fuscus+grp:birds&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=sp:fuscus+grp:birds&amp;key=demo</a></li>
+            </ul>
+            will search for all birds having the specific epithet <em>fuscus</em>. See the <a href='https://xeno-canto.org/help/search'>Search tips</a> for all possible 
+            <span class='code strong'>grp</span> options.
+            </p>
+           
+            <h3>ssp</h3>
+            
+            <p>A search for <em>Larus fuscus</em> may still be to broad if you are only interested in recordings of the nominate
+            Baltic Gull <em>Larus fuscus fuscus</em>. In that case, append the <span class='code strong'>ssp</span> tag
+            to your query, or use a triplet similar to the pair of the <span class='code strong'>sp</span> tag:
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=gen:larus+sp:fuscus+ssp:fuscus&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=gen:larus+sp:fuscus+ssp:fuscus&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=ssp:"larus fuscus fuscus"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=ssp:"larus fuscus fuscus"&amp;key=demo</a></li>
+            </ul>
+            </p>
+            
+            <h3>fam</h3>
+            <p>Conversely, if you want to broaden your search to all gulls, not just those from the genus <em>Larus</em>, 
+            this is now availabe with the new <span class='code strong'>fam</span> tag:
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=fam:laridae&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=fam:laridae&amp;key=demo</a></li>
+            </ul>
+            </p>
+            
+            <h3>en</h3>
+            <p>Finally, it is also possible to search for taxa using their vernacular name in English using the <span class='code strong'>en</span> tag. 
+            There are good reasons to avoid this type of search though. First, unlike scientific names, 
+            common names are not guaranteed to be unique. Second, this search option tends to be slow, as it involves 
+            a wildcard search by default. Compare the performance of two queries on 'lesser black-backed gull', 
+            one using the default wildcard search, the other including the matches operator:
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=en:"lesser black-backed gull"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=en:"lesser black-backed gull"&amp;key=demo</a> (wildcard search, slow)</li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=en:"=lesser black-backed gull"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=en:"=lesser black-backed gull"&amp;key=demo</a> (matches search)</li>
+            </ul>
+            An extreme example is this query, which (as of writing) potentially returns results from twelve different 
+            species sharing the vernacular name 'Bladder Grasshopper':
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=en:"=bladder grasshopper"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=en:="=bladder grasshopper"&amp;key=demo</a></li>
+            </ul>
+            </p>
+            
+            <h2>Geographic examples</h2>
+            <h3>area, cnt, location</h3>
+            
+            <p>There are several ways to geographically limit your queries. In order of scale, they are 
+            <span class='code strong'>area</span> (world area, more or less at continental level), <span class='code strong'>cnt</span> (country) and 
+            <span class='code strong'>loc</span> (location). The examples cover land mammals from Asia, frogs from Surinam and
+            birds from Suffolk Coastal District, Suffolk, England.
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=area:asia+grp:"land mammals"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=area:asia+grp:"land mammals"&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=cnt:surinam+grp:frogs&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=cnt:surinam+grp:frogs&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=loc:"Suffolk Coastal District, Suffolk, England"+grp:birds&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=loc:"Suffolk Coastal District, Suffolk, England"+grp:birds&amp;key=demo</a></li>
+            </ul>
+            </p>
+            
+            <h3>lat, lon, box</h3>
+            
+            <p>Alternatively, you can base your query on <span class='code strong'>lat</span> (latitude), 
+            <span class='code strong'>lon</span> (longitude), or a combination thereof. The examples
+            return birds recorded above the Arctic Circle (65° N), bats recorded around 4.2884N, 36.2626E (in Kenya) and
+            grasshoppers recorded in a bounding box covering parts of Sumatra, Malaysia and Singapore:</p>
+            
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=grp:birds lat:">66.5"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=grp:birds lat:">66.5"&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=lat:4.2884+lon:36.2626+grp:bats&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=lat:4.2884+lon:36.2626+grp:bats&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=box:-1.16,94.62,6.34,106.48+grp:grasshoppers&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=box:-1.16,94.62,6.34,106.48+grp:grasshoppers&amp;key=demo</a></li>
+            </ul>
+            </p>   
+            
+            <h2>Date-related examples</h2>
+            <h3>year, month, since</h3>
+            
+            <p>The <span class='code strong'>year</span> and <span class='code strong'>month</span> tags allow 
+            filtering on recording dates before, after or between specific periods. The <span class='code strong'>since</span>
+            tag can be used to search for date of uploading. Examples are frogs recorded before 1970, European birds from the family of
+            Finches recorded after August, or all land mammal recordings from last month:
+            
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=year:"<1970"+grp:frogs&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=year:"<1970"+grp:frogs&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=month:">8"+fam:fringillidae+area:europe&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=month:">8"+fam:fringillidae+area:europe&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=since:31+grp:"land mammals"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=since:31+grp:"land mammals"&amp;key=demo</a></li>
+            </ul>
+            </p>
+            
+            <h2>Sound type and animal-related examples</h2>
+            <h3>type, sex, stage</h3>
+            
+            <p>The <span class='code strong'>type</span> (sound type), <span class='code strong'>sex</span> and 
+            <span class='code strong'>stage</span> (life stage) tags specify several sound and animal-related characters.
+            The various options are listed under <a href='https://xeno-canto.org/help/search#advanced'>Tips</a>.
+            Examples here are female bird songs from the Americas or social calls of juvenile bats:
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=type:song+sex:female+grp:birds+area:america&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=type:song+sex:female+grp:birds+area:america&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=type:"social call"+stage:juvenile+grp:bats&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=type:"social call"+stage:juvenile+grp:bats&amp;key=demo</a></li>
+            </ul>
+            </p>
+            
+            <h2>Sound file-related examples</h2>
+            <h3>q, len, smp</h3>
+            
+            <p>
+            Several tags can be used to search for the property of sound files themselves. <span class='code strong'>q</span>
+            for sound quality (on an A-E scale), <span class='code strong'>len</span> for length (in seconds) and 
+            <span class='code strong'>smp</span> for sample rate of the recording. The examples show the results for
+            top quality soundscapes lasting at least an hour and high-frequency grasshopper recordings from Malaysia with 
+            quality A and B.
+            <ul>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=grp:soundscape+q:A+len:">3600"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=grp:soundscape+q:A+len:">3600"&amp;key=demo</a></li>
+            <li><a href='https://xeno-canto.org/api/3/recordings?query=cnt:malaysia+smp:">192000"+q:">C"&amp;key=demo'>https://xeno-canto.org/api/3/recordings?query=cnt:malaysia+smp:">192000"+q:">C"&amp;key=demo</a></li>
+            </ul>
+            </p>   
+            
+            <p>The list of tags used in these examples is incomplete. Check <a href='https://xeno-canto.org/help/search#advanced'>Search tips</a>
+            to verify you are optimising your API requests!</p>      
+
+            <a name='changes'></a>
+            <h1>Changes</h1>
+            <p>The following has been changed since API v2:</p>
+            <ul>
+            <li>the <span class='code strong'>fam</span> and <span class='code strong'>en</span> search tags have been added,
+            as replacements for the generic 'tag-less' search option on a single term.</li>
+            <li>the <span class='code strong'>sp</span> search tag has been added, as a replacement for the generic 'tag-less' search option on two terms.</li>
+            <li>searching on three or more 'tag-less' terms has been disabled altogether; use the combination of
+            <span class='code strong'>gen</span>, <span class='code strong'>sp</span> and <span class='code strong'>ssp</span>
+            for subspecies and  <span class='code strong'>en</span> for names in English instead.</li>
+            <li><span class='code strong'>group</span> in the recording object has been changed to <span class='code strong'>grp</span>, mirroring
+            the search tag.</li>
+            <li><span class='code strong'>lng</span> in the recording object has been changed to <span class='code strong'>lon</span>, mirroring
+            the search tag.</li>
+            </ul>
+            
+        </div>
+            <footer>
+            <div>
+            <table>
+            <tr>
+            <td>
+            <p>Xeno-canto.org is powered by the Xeno-canto Foundation and Naturalis Biodiversity Center
+            </p>
+            <p>
+            <a href='//www.naturalis.nl/' target='_blank'><img width='147' height='80' src='/static/img/naturalis_logo.png' 
+                alt='Naturalis Biodiversity Center'></a>
+            </p>
+            <p>
+            Website &copy; 2005-2025 <b>Xeno-canto Foundation</b>
+            </p>
+            <p id='license'>Recordings &copy; the recordist. See recording details for license information.
+            </p>
+            <p id='license'>Sonogram images &copy; <b>Xeno-canto Foundation</b>. Sonogram images share the same license terms as the recording they depict.
+            </p>
+            <p><a href='https://xeno-canto.org/about/terms'>Terms of use</a></p>
+            <p><a href='https://xeno-canto.org/about/credits'>Credits</a></p>
+            </td>
+            <td>
+            <ul class='simple'>
+            <li><a href='//www.facebook.com/xenocanto'><img class='icon' width='24' height='24' src='/static/img/facebook.png'> Like us on Facebook</a></li>
+            <li><a href='//www.twitter.com/xenocanto'><img class='icon' width='24' height='24' src='/static/img/twitter.png'> Follow us on Twitter</a></li>
+            <li><a href='//www.youtube.com/channel/UC8At4qJ5678S3IX8_n7mstg'><img class='icon' width='24' height='24' src='/static/img/youtube.png'> Find us on YouTube</a></li>
+            <li>
+            <script>
+            document.write(
+                "<n uers=\"znvygb:pbagnpg@krab-pnagb.bet?fhowrpg=Pbagnpg%20krab-pnagb\" ery=\"absbyybj\"><vzt pynff='vpba' jvqgu='24' urvtug='24' fep='/fgngvp/vzt/znvy-24.cat'> Pbagnpg hf ivn rznvy</n>" .
+                replace(/[a-zA-Z]/g, 
+                    function(c) {
+                        return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+                    }
+                )
+            )
+            </script>
+        </li>
+            <li style='margin-top: 30px;'><a href='https://xeno-canto.org/donate'><img src='https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif' alt='Donate to Xeno-canto'></a></li>
+            </ul>
+            </td>
+            <td>
+            <ul id='languages'>
+            
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/af'>Afrikaans</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/ca'>Català</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/cs'>Česky</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/da'>Dansk</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/de'>Deutsch</a></li>
+                <li class='selected'><a rel='nofollow' href='https://xeno-canto.org/lang/en'>English</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/es'>Español</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/et'>Eesti</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/fi'>Suomi</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/fr'>Français</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/hu'>Magyar</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/id'>Bahasa Indonesia</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/is'>Íslenska</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/it'>Italiano</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/ja'>日本語</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/lt'>Lietuvių</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/lv'>Latviešu</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/nl'>Nederlands</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/no'>Norsk</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/pl'>Polski</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/pt'>Português</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/pt_BR'>Português do Brasil</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/ru'>Русский</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/se'>Davvisámegiella</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/si'>Slovenčina</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/sl'>Slovenščina</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/sv'>Svenska</a></li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/th'>ภาษาไทย</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/uk'>Українська</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/zh_CN'>简体中文</a>*</li>
+                <li ><a rel='nofollow' href='https://xeno-canto.org/lang/zh_TW'>繁體中文</a></li>
+            </ul>
+            <p>* Only bird names are translated</p>
+            </td>
+            </tr>
+            </table>
+            </div>
+            </footer>
+            <script type='text/javascript'>
+            jQuery(document).ready(
+                function () {
+                    // set up collapsible 'read more' sections
+                    jQuery('.readmore').expander({slicePoint:40, expandText:'more&nbsp;&raquo;', userCollapseText: '&laquo;&nbsp;less', widow: 2 });
+                }
+            );
+            </script>
+        <script type='text/javascript'>
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-324458-1']);
+            _gaq.push(['_trackPageview']);
+            
+            (function () {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+        <script type='text/javascript' src='/static/js/jplayer/jquery.jplayer.min.js'></script>
+        <script type='text/javascript' src='/static/js/jplayer/xcplayer.js?v4-9-2'></script>
+        <script type='text/javascript' src='/static/js/jquery.autocomplete-min.js'></script>
+        <script type='text/javascript' src='/static/js/jquery.placeholder.min.js'></script>
+        <script type='text/javascript' src='/static/js/jquery.expander.min.js'></script>
+        <script type='text/javascript' src='/static/js/jquery.fancybox.pack.js'></script>
+        <script type='text/javascript' src='/static/js/jquery.qtip.min.js'></script>
+        <script type='text/javascript' src='/static/js/rate-recording.js?v4-9-2'></script>
+        <script type='text/javascript' src='/static/js/hoverIntent.js'></script>
+        <script type='text/javascript' src='/static/js/superfish.js'></script>
+        <script type='text/javascript' src='/static/js/xc-generic.js?v4-9-2'></script>
+        </body>
+        </html>
+        
