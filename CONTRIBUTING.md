@@ -15,12 +15,15 @@
   - `feature/add-map-clustering`
   - `fix/audio-playback-mobile`
 
-### Pull Request Process
+### Change and Pull Request Workflow
+
+Steps 1–3 prepare your change; steps 4–6 cover opening and completing the PR.
 
 1. Create a feature branch from `main`
 2. Implement changes with appropriate tests
 3. Run the local test suite
 4. Create a pull request using the PR template
+   - Template: [Pull Request Template](/.github/pull_request_template.md)
 5. Address review feedback
 6. Merge after approval
 
