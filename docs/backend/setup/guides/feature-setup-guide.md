@@ -59,7 +59,7 @@ This guide builds upon the backend setup and provides detailed steps for impleme
 - Update documentation
 - Check code against style guide
 - Verify mobile responsiveness
-- Complete PR template
+- Complete PR template: [Pull Request Template](/.github/pull_request_template.md)
 
 ### 5. Deployment Considerations
 

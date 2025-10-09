@@ -55,6 +55,7 @@ New team members should start with:
 4. [Backend Setup Guide](./backend/setup/hybrid-backend-setup-guide.md) - Set up the backend locally
 5. [Docker Guide](./project/docker-guide.md) - Learn Docker for verification and testing
 6. [API Endpoints](./backend/api/endpoints.md) - Explore available API endpoints
+7. [Contributing Guidelines](../CONTRIBUTING.md) - Branch naming, PR process, and review checklist
 
 ## Development Principles
 
