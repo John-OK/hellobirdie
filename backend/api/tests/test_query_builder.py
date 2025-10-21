@@ -11,9 +11,8 @@ class QueryBuilderTestCase(TestCase):
     SP = "corax"
     EN = "crow"
 
-    def test_returns_list_of_tags(self):
-        """Test that query builder returns a list"""
-        tags = build_tags(
+    def _build_tags_with_default(self):
+        return build_tags(
             self.LAT_MIN,
             self.LON_MIN,
             self.LAT_MAX,
@@ -22,21 +21,18 @@ class QueryBuilderTestCase(TestCase):
             self.SP,
             self.EN,
         )
-        self.assertIsInstance(tags, list)
+
+    def test_returns_list_of_tags(self):
+        """Test that query builder returns a list"""
+        self.assertIsInstance(self._build_tags_with_default(), list)
 
     def test_tags_is_list_with_exactly_one_grp_birds(self):
         """Test that exactly one "grp:birds" exists in the tags"""
-        tags = build_tags(
-            self.LAT_MIN,
-            self.LON_MIN,
-            self.LAT_MAX,
-            self.LON_MAX,
-            self.GEN,
-            self.SP,
-            self.EN,
-        )
-        self.assertEqual(tags.count("grp:birds"), 1)
+        self.assertEqual(self._build_tags_with_default().count("grp:birds"), 1)
 
-    # def test_tags_in_expected_order(self):
-    #     EXPECTED_PREFIX_ORDER = ["grp:birds", "box:", "gen:", "sp:", "en:"]
-    #     pass
+    def test_tags_in_expected_order(self):
+        EXPECTED_PREFIX_ORDER = ["grp:", "box:", "gen:", "sp:", "en:"]
+        tags = self._build_tags_with_default()
+        prefixes = [tag.split(":")[0] + ":" for tag in tags]
+        self.assertEqual(prefixes, EXPECTED_PREFIX_ORDER)
+        self.assertEqual(len(tags), len(EXPECTED_PREFIX_ORDER))
