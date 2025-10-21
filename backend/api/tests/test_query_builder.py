@@ -11,7 +11,20 @@ class QueryBuilderTestCase(TestCase):
     SP = "corax"
     EN = "crow"
 
-    def test_only_one_grp_birds_exists(self):
+    def test_returns_list_of_tags(self):
+        """Test that query builder returns a list"""
+        tags = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            self.GEN,
+            self.SP,
+            self.EN,
+        )
+        self.assertIsInstance(tags, list)
+
+    def test_tags_is_list_with_exactly_one_grp_birds(self):
         """Test that exactly one "grp:birds" exists in the tags"""
         tags = build_tags(
             self.LAT_MIN,
