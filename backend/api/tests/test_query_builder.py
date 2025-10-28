@@ -3,10 +3,10 @@ from api.services.query_builder import build_tags
 
 
 class QueryBuilderTestCase(TestCase):
-    LAT_MIN = 10.0
-    LON_MIN = -20.0
-    LAT_MAX = 11.0
-    LON_MAX = 19.0
+    LAT_MIN = 10.345
+    LON_MIN = -20.991
+    LAT_MAX = 11.091
+    LON_MAX = -19.039
     GEN = "Corvus"
     SP = "corax"
     EN = "crow"
@@ -81,3 +81,18 @@ class QueryBuilderTestCase(TestCase):
             self.assertEqual(coordinate.count("."), 1)
             self.assertEqual(len(coordinate.split(".")[1]), 2)
         self.assertEqual(len(rounded_coordinates), 4)
+
+    def test_box_is_correctly_formatted(self):
+        """
+        Test that box is formatted with:
+        - no spaces; exactly 3 commas,
+        - order is LAT_MIN,LON_MIN,LAT_MAX,LON_MAX
+        """
+
+        EXPECTED_COORDINATE_ORDER = ["10.34", "-21.00", "11.10", "-19.03"]
+        coordinates = self._build_tags_with_default()[1].split(":")[1]
+        coordinates_list = coordinates.split(",")
+        self.assertEqual(coordinates.count(" "), 0)
+        self.assertEqual(coordinates.count(","), 3)
+        self.assertEqual(coordinates_list, EXPECTED_COORDINATE_ORDER)
+        self.assertEqual(len(coordinates_list), 4)
