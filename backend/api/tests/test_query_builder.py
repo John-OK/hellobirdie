@@ -96,3 +96,52 @@ class QueryBuilderTestCase(TestCase):
         self.assertEqual(coordinates.count(","), 3)
         self.assertEqual(coordinates_list, EXPECTED_COORDINATE_ORDER)
         self.assertEqual(len(coordinates_list), 4)
+
+    def test_returns_only_grp_and_box_when_no_filters(self):
+        """Test that only "grp:" and "box:" tags are present and in expected order when
+        no filters are provided"""
+        EXPECTED_TAGS_AND_ORDER = ["grp:birds", "box:10.34,-21.00,11.10,-19.03"]
+        tags = build_tags(self.LAT_MIN, self.LON_MIN, self.LAT_MAX, self.LON_MAX)
+        self.assertEqual(len(tags), 2)
+        self.assertEqual(tags, EXPECTED_TAGS_AND_ORDER)
+
+    def test_empty_filters_treated_as_absent(self):
+        """Test that empty strings or those with just whitespace are treated as absent"""
+        empty_and_whitespace_tags = build_tags(
+            self.LAT_MIN, self.LON_MIN, self.LAT_MAX, self.LON_MAX, "", " ", "    "
+        )
+        self.assertEqual(len(empty_and_whitespace_tags), 2)
+        self.assertEqual(
+            empty_and_whitespace_tags, ["grp:birds", "box:10.34,-21.00,11.10,-19.03"]
+        )
+
+        mixed_populated_and_empty_and_whitespace_tags = build_tags(
+            self.LAT_MIN, self.LON_MIN, self.LAT_MAX, self.LON_MAX, "", " ", "crow"
+        )
+        self.assertEqual(len(mixed_populated_and_empty_and_whitespace_tags), 3)
+        self.assertEqual(
+            mixed_populated_and_empty_and_whitespace_tags,
+            ["grp:birds", "box:10.34,-21.00,11.10,-19.03", "en:crow"],
+        )
+
+    def test_trims_filter_values_before_tagging(self):
+        tags_with_unnecessary_whitespace_ = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            " Corvus",
+            "albus ",
+            " pied  crow ",
+        )
+        self.assertEqual(len(tags_with_unnecessary_whitespace_), 5)
+        self.assertEqual(
+            tags_with_unnecessary_whitespace_,
+            [
+                "grp:birds",
+                "box:10.34,-21.00,11.10,-19.03",
+                "gen:Corvus",
+                "sp:albus",
+                "en:pied crow",
+            ],
+        )
