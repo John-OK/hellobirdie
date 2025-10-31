@@ -105,7 +105,7 @@ class QueryBuilderTestCase(TestCase):
         self.assertEqual(len(tags), 2)
         self.assertEqual(tags, EXPECTED_TAGS_AND_ORDER)
 
-    def test_empty_filters_treated_as_absent(self):
+    def test_blank_filters_are_ignored(self):
         """Test that empty strings or those with just whitespace are treated as absent"""
         empty_and_whitespace_tags = build_tags(
             self.LAT_MIN, self.LON_MIN, self.LAT_MAX, self.LON_MAX, "", " ", "    "
@@ -124,7 +124,7 @@ class QueryBuilderTestCase(TestCase):
             ["grp:birds", "box:10.34,-21.00,11.10,-19.03", "en:crow"],
         )
 
-    def test_trims_filter_values_before_tagging(self):
+    def test_filters_are_trimmed_and_collapsed(self):
         tags_with_unnecessary_whitespace_ = build_tags(
             self.LAT_MIN,
             self.LON_MIN,
@@ -132,7 +132,7 @@ class QueryBuilderTestCase(TestCase):
             self.LON_MAX,
             " Corvus",
             "albus ",
-            " pied  crow ",
+            " Pied  Crow ",
         )
         self.assertEqual(len(tags_with_unnecessary_whitespace_), 5)
         self.assertEqual(
@@ -142,6 +142,86 @@ class QueryBuilderTestCase(TestCase):
                 "box:10.34,-21.00,11.10,-19.03",
                 "gen:Corvus",
                 "sp:albus",
-                "en:pied crow",
+                "en:Pied Crow",
+            ],
+        )
+
+    def test_tags_order_with_only_en(self):
+        """Test expected order when only 'en' passed"""
+        tags = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            en="Sharp-shinned Hawk",
+        )
+
+        self.assertEqual(
+            tags,
+            [
+                "grp:birds",
+                "box:10.34,-21.00,11.10,-19.03",
+                "en:Sharp-shinned Hawk",
+            ],
+        )
+
+    def test_tags_order_with_only_gen(self):
+        """Test expected order when only 'gen' passed"""
+        tags = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            gen="Buteo",
+        )
+
+        self.assertEqual(
+            tags,
+            [
+                "grp:birds",
+                "box:10.34,-21.00,11.10,-19.03",
+                "gen:Buteo",
+            ],
+        )
+
+    def test_tags_order_with_gen_and_sp(self):
+        """Test expected order when only 'gen' and 'sp' passed"""
+        tags = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            gen="Aquila",
+            sp="chrysaetos",
+        )
+
+        self.assertEqual(
+            tags,
+            [
+                "grp:birds",
+                "box:10.34,-21.00,11.10,-19.03",
+                "gen:Aquila",
+                "sp:chrysaetos",
+            ],
+        )
+
+    def test_tags_order_with_gen_and_en(self):
+        """Test expected order when only 'gen' and 'en' passed"""
+        tags = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            gen="Accipiter",
+            en="Cooper's Hawk",
+        )
+
+        self.assertEqual(
+            tags,
+            [
+                "grp:birds",
+                "box:10.34,-21.00,11.10,-19.03",
+                "gen:Accipiter",
+                "en:Cooper's Hawk",
             ],
         )
