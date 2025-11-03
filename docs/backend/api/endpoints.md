@@ -25,7 +25,7 @@ Returns bird recordings near a coordinate, backed by the xeno-canto API.
 - `radiusKm` (number, optional): Radius in kilometers (default: 50; must be > 0).
 - `en` (string, optional): English name contains filter.
 - `gen` (string, optional): Scientific genus filter (genus-level search when provided without `sp`).
-- `sp` (string, optional): Scientific species epithet (requires `gen`; otherwise 400).
+- `sp` (string, optional): Scientific species filter. May be a full scientific name in quotes (e.g., "Falco columbarius") or a specific epithet (e.g., "fuscus"). Can be used alone or together with `gen`.
 - `perPage` (integer, optional): Items per page (default 200; min 50; max 500).
 - `page` (integer, optional): Page index for this endpoint (default 1).
 

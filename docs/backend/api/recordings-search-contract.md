@@ -22,12 +22,12 @@ Audience: Backend (DRF) and Frontend (React/TypeScript)
 - `radiusKm` (number, optional): Radius in kilometers. Default: 50. Must be > 0.
 - `en` (string, optional): English name contains filter. Case-insensitive contains.
 - `gen` (string, optional): Scientific genus filter. When provided without `sp`, returns all species in the genus.
-- `sp` (string, optional): Scientific species epithet. Valid only if `gen` is also provided (otherwise 400). `gen`+`sp` together target an exact species.
+- `sp` (string, optional): Scientific species filter. May be a full scientific name in quotes (e.g., "Falco columbarius"), a specific epithet (e.g., "fuscus"), or used together with `gen`. `sp` alone is allowed.
 - `perPage` (integer, optional): Items per page. Default: 200. Min: 50. Max: 500.
 - `page` (integer, optional): 1-based page index for this endpoint. Default: 1.
 
 Rules:
-- Scientific filters: `gen` alone is allowed (genus-level search). `sp` without `gen` is invalid (400). `gen` + `sp` narrows to a single species.
+- Scientific filters: `gen` alone is allowed (genus-level search); `sp` alone is allowed; `gen` + `sp` targets a single species.
 - Combining `en` with scientific filters applies logical AND (further narrows results).
 - The backend always filters to birds using `grp:birds` upstream.
  - Subspecies filtering (`ssp`) is not supported in the MVP. The response item may include `ssp`, but there is no `ssp` query parameter.
@@ -119,6 +119,7 @@ HTTP status mapping:
   3. `gen:<genus>`
   4. `sp:<species>`
   5. `en:<substring>`
+- Query assembly: the service layer joins tags with `+` and quotes multi-word values (e.g., `en:"lesser black-backed gull"`). QueryBuilder returns a list of tags only.
 - `box:` formatting:
   - No spaces; exactly three commas.
   - Exactly two decimal places for each coordinate.
@@ -135,7 +136,7 @@ HTTP status mapping:
 
 - Valid inputs produce a 200 with the shape above; fields have correct types and semantics.
 - Invalid inputs produce 400 with `error.code=validation_error` and `details`.
-- Scientific filters: `gen` alone is accepted (genus-level results); `sp` without `gen` returns 400 with `error.code=validation_error`.
+- Scientific filters: `gen` alone is accepted (genus-level results); `sp` alone is accepted; `gen+sp` narrows to a single species.
 - Upstream timeouts/5xx: retries with backoff+jitter, then mapped to 503/504 accordingly.
 - Pagination fields (`page`, `perPage`, `pagesFetched`, `hasNextPage`) are consistent.
 - `servedFromCache`, `refreshedAt`, and `isStale` are present and correct when caching is involved.

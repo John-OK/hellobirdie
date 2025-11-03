@@ -190,6 +190,26 @@ class QueryBuilderTestCase(TestCase):
             ],
         )
 
+    def test_tags_order_with_only_sp(self):
+        """Test that stable order kept with provided filters only"""
+
+        tags = build_tags(
+            self.LAT_MIN,
+            self.LON_MIN,
+            self.LAT_MAX,
+            self.LON_MAX,
+            sp="corax",
+        )
+
+        self.assertEqual(
+            tags,
+            [
+                "grp:birds",
+                "box:10.34,-21.00,11.10,-19.03",
+                "sp:corax",
+            ],
+        )
+
     def test_tags_order_with_gen_and_sp(self):
         """Test that stable order kept with provided filters only"""
 
