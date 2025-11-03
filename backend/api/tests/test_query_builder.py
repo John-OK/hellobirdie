@@ -38,30 +38,34 @@ class QueryBuilderTestCase(TestCase):
         )
 
     def test_returns_list_of_tags(self):
-        """Test that query builder returns a list"""
+        """Test that returns a list[str] of tags"""
+
         self.assertIsInstance(self._build_tags_with_default(), list)
 
     def test_tags_is_list_with_exactly_one_grp_birds(self):
-        """Test that exactly one "grp:birds" exists in the tags"""
+        """Test that exactly one "grp:birds" tag"""
+
         self.assertEqual(self._build_tags_with_default().count("grp:birds"), 1)
 
     def test_tags_in_expected_order(self):
-        EXPECTED_PREFIX_ORDER = ["grp:", "box:", "gen:", "sp:", "en:"]
+        """Test that order of tags is grp -> box -> gen -> sp -> en when present"""
+
+        expected_prefix_order = ["grp:", "box:", "gen:", "sp:", "en:"]
         tags = self._build_tags_with_default()
         prefixes = [tag.split(":")[0] + ":" for tag in tags]
-        self.assertEqual(prefixes, EXPECTED_PREFIX_ORDER)
-        self.assertEqual(len(tags), len(EXPECTED_PREFIX_ORDER))
+        self.assertEqual(prefixes, expected_prefix_order)
+        self.assertEqual(len(tags), len(expected_prefix_order))
 
     def test_box_rounds_outward_for_positive_coordinates(self):
         """
-        Test, for positive coordinates, that box coordinates are exactly 2 decimal places,
-        and rounds outward to 0.01°: minimums rounded down; maximums rounded up
+        Test that coordinates are exactly 2 decimal and rounds outward
+        (min floor, max ceil) for positive values
         """
-        EXPECTED_COORDINATES = ["10.23", "10.23", "20.24", "20.24"]
+
         rounded_coordinates = self._extract_box_coordinates_from_tags(
             10.231, 10.231, 20.231, 20.231
         )
-        self.assertEqual(rounded_coordinates, EXPECTED_COORDINATES)
+        self.assertEqual(rounded_coordinates, ["10.23", "10.23", "20.24", "20.24"])
         for coordinate in rounded_coordinates:
             self.assertEqual(coordinate.count("."), 1)
             self.assertEqual(len(coordinate.split(".")[1]), 2)
@@ -69,14 +73,14 @@ class QueryBuilderTestCase(TestCase):
 
     def test_box_rounds_outward_for_negative_coordinates(self):
         """
-        Test, for negative coordinates, that box coordinates are exactly 2 decimal places,
-        and rounds outward to 0.01°: minimums rounded down; maximums rounded up
+        Test that coordinates are exactly 2 decimal and rounds outward
+        (min floor, max ceil) for negative values
         """
-        EXPECTED_COORDINATES = ["-20.24", "-20.24", "-10.23", "-10.23"]
+
         rounded_coordinates = self._extract_box_coordinates_from_tags(
             -20.231, -20.231, -10.231, -10.231
         )
-        self.assertEqual(rounded_coordinates, EXPECTED_COORDINATES)
+        self.assertEqual(rounded_coordinates, ["-20.24", "-20.24", "-10.23", "-10.23"])
         for coordinate in rounded_coordinates:
             self.assertEqual(coordinate.count("."), 1)
             self.assertEqual(len(coordinate.split(".")[1]), 2)
@@ -84,29 +88,27 @@ class QueryBuilderTestCase(TestCase):
 
     def test_box_is_correctly_formatted(self):
         """
-        Test that box is formatted with:
-        - no spaces; exactly 3 commas,
-        - order is LAT_MIN,LON_MIN,LAT_MAX,LON_MAX
+        Test that box with no spaces, exactly 3 commas,
+        four coords in LAT_MIN,LON_MIN,LAT_MAX,LON_MAX order
         """
 
-        EXPECTED_COORDINATE_ORDER = ["10.34", "-21.00", "11.10", "-19.03"]
         coordinates = self._build_tags_with_default()[1].split(":")[1]
         coordinates_list = coordinates.split(",")
         self.assertEqual(coordinates.count(" "), 0)
         self.assertEqual(coordinates.count(","), 3)
-        self.assertEqual(coordinates_list, EXPECTED_COORDINATE_ORDER)
+        self.assertEqual(coordinates_list, ["10.34", "-21.00", "11.10", "-19.03"])
         self.assertEqual(len(coordinates_list), 4)
 
     def test_returns_only_grp_and_box_when_no_filters(self):
-        """Test that only "grp:" and "box:" tags are present and in expected order when
-        no filters are provided"""
-        EXPECTED_TAGS_AND_ORDER = ["grp:birds", "box:10.34,-21.00,11.10,-19.03"]
+        """Test that only "grp:" and "box:" tags are present when filters absent"""
+
         tags = build_tags(self.LAT_MIN, self.LON_MIN, self.LAT_MAX, self.LON_MAX)
         self.assertEqual(len(tags), 2)
-        self.assertEqual(tags, EXPECTED_TAGS_AND_ORDER)
+        self.assertEqual(tags, ["grp:birds", "box:10.34,-21.00,11.10,-19.03"])
 
     def test_blank_filters_are_ignored(self):
-        """Test that empty strings or those with just whitespace are treated as absent"""
+        """Test that empty/whitespace filters are ignored; mixed cases keep stable order"""
+
         empty_and_whitespace_tags = build_tags(
             self.LAT_MIN, self.LON_MIN, self.LAT_MAX, self.LON_MAX, "", " ", "    "
         )
@@ -125,6 +127,8 @@ class QueryBuilderTestCase(TestCase):
         )
 
     def test_filters_are_trimmed_and_collapsed(self):
+        """Test internal whitespace in filter values trimmed and collapsed"""
+
         tags_with_unnecessary_whitespace_ = build_tags(
             self.LAT_MIN,
             self.LON_MIN,
@@ -147,7 +151,8 @@ class QueryBuilderTestCase(TestCase):
         )
 
     def test_tags_order_with_only_en(self):
-        """Test expected order when only 'en' passed"""
+        """Test that stable order kept with provided filters only"""
+
         tags = build_tags(
             self.LAT_MIN,
             self.LON_MIN,
@@ -166,7 +171,8 @@ class QueryBuilderTestCase(TestCase):
         )
 
     def test_tags_order_with_only_gen(self):
-        """Test expected order when only 'gen' passed"""
+        """Test that stable order kept with provided filters only"""
+
         tags = build_tags(
             self.LAT_MIN,
             self.LON_MIN,
@@ -185,7 +191,8 @@ class QueryBuilderTestCase(TestCase):
         )
 
     def test_tags_order_with_gen_and_sp(self):
-        """Test expected order when only 'gen' and 'sp' passed"""
+        """Test that stable order kept with provided filters only"""
+
         tags = build_tags(
             self.LAT_MIN,
             self.LON_MIN,
@@ -206,7 +213,8 @@ class QueryBuilderTestCase(TestCase):
         )
 
     def test_tags_order_with_gen_and_en(self):
-        """Test expected order when only 'gen' and 'en' passed"""
+        """Test that stable order kept with provided filters only"""
+
         tags = build_tags(
             self.LAT_MIN,
             self.LON_MIN,
