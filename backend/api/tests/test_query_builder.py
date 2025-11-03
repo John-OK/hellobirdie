@@ -233,3 +233,9 @@ class QueryBuilderTestCase(TestCase):
                 "en:Cooper's Hawk",
             ],
         )
+
+    def test_box_is_idempotent_for_two_decimal_coords(self):
+        """Test that leaves box unchanged when inputs already two-decimal and outward rounded"""
+
+        tags = build_tags(27.33, -103.58, 31.49, -87.29)
+        self.assertEqual(tags, ["grp:birds", "box:27.33,-103.58,31.49,-87.29"])
