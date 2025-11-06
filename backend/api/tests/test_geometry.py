@@ -48,3 +48,31 @@ class ComputeBoundingBoxTestCase(TestCase):
         self.assertLess(lon_min, lon_max)
         self.assertAlmostEqual(lon_min, self.LON - radius_degrees_lon, delta=0.005)
         self.assertAlmostEqual(lon_max, self.LON + radius_degrees_lon, delta=0.005)
+
+    def test_longitude_degree_span_is_larger_at_60deg_lat_than_40deg_lat(self):
+        """At fixed radius, longitudinal span in degrees at 60° lat is larger than at 40° lat."""
+
+        radius_km = 50.0
+        lat_60deg = 60.0
+        box_60deg = compute_bounding_box(lat_60deg, self.LON, radius_km)
+        lon_min_60deg = box_60deg[1]
+        lon_max_60deg = box_60deg[3]
+        radius_degrees_lon_60deg = self._km_to_degrees_lon(lat_60deg, radius_km)
+
+        box_40deg = compute_bounding_box(self.LAT, self.LON, radius_km)
+        lon_min_40deg = box_40deg[1]
+        lon_max_40deg = box_40deg[3]
+        extent_40deg = lon_max_40deg - lon_min_40deg
+        extent_60deg = lon_max_60deg - lon_min_60deg
+
+        for coord in box_60deg:
+            self.assertIsInstance(coord, float)
+        self.assertEqual(len(box_60deg), 4)
+        self.assertLess(lon_min_60deg, lon_max_60deg)
+        self.assertAlmostEqual(
+            lon_min_60deg, self.LON - radius_degrees_lon_60deg, delta=0.005
+        )
+        self.assertAlmostEqual(
+            lon_max_60deg, self.LON + radius_degrees_lon_60deg, delta=0.005
+        )
+        self.assertGreater(extent_60deg, extent_40deg)
