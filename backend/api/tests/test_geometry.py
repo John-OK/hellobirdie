@@ -1,6 +1,6 @@
 from django.test import TestCase
-from api.services.geometry import compute_bounding_box
-from math import pi, cos
+from api.services.geometry import compute_bounding_box, haversine_km
+from math import cos, pi
 
 
 class ComputeBoundingBoxTestCase(TestCase):
@@ -76,3 +76,10 @@ class ComputeBoundingBoxTestCase(TestCase):
             lon_max_60deg, self.LON + radius_degrees_lon_60deg, delta=0.005
         )
         self.assertGreater(extent_60deg, extent_40deg)
+
+    def test_haversine_zero_distance_is_zero(self):
+        """Test that the haversine distance is zero for two points with the same coords"""
+
+        haversine_distance = haversine_km(40, 111, 40, 111)
+
+        self.assertEqual(haversine_distance, 0)
