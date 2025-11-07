@@ -107,3 +107,11 @@ class ComputeBoundingBoxTestCase(TestCase):
         haversine_distance2 = haversine_km(15, 25, 10, 20)
 
         self.assertAlmostEqual(haversine_distance1, haversine_distance2, delta=0.000001)
+
+    def test_haversine_antimeridian_1deg_longitude_at_equator_is_approx_111_32_km(self):
+        """At 0° latitude, (0°, 179.5°) and (0°, −179.5°) are 1° apart across the antimeridian;
+        distance ≈ 111.32 km (±0.2 km)"""
+
+        haversine_distance = haversine_km(0.0, 179.5, 0.0, -179.5)
+
+        self.assertAlmostEqual(haversine_distance, 111.32 * cos(radians(0)), delta=0.2)
