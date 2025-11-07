@@ -1,6 +1,7 @@
 from math import asin, cos, pi, radians, sin, sqrt
 
 KM_PER_DEGREE_LAT = 111.32
+EARTH_RADIUS_KM = 6371.0088  # Earth's radius
 
 
 def compute_bounding_box(lat, lon, radius_km):
@@ -15,16 +16,18 @@ def compute_bounding_box(lat, lon, radius_km):
 
 
 def haversine_km(lat1, lon1, lat2, lon2):
-    EARTH_RADIUS_KM = 6371.0088  # Earth's radius
     lat1_rad = radians(lat1)
     lon1_rad = radians(lon1)
     lat2_rad = radians(lat2)
     lon2_rad = radians(lon2)
     delta_lat = lat2_rad - lat1_rad
     delta_lon = lon2_rad - lon1_rad
+
+    # Haversine formulas
     a = (sin(delta_lat / 2)) ** 2 + cos(lat1_rad) * cos(lat2_rad) * (
         sin(delta_lon / 2)
     ) ** 2
     c = 2 * asin(min(1, sqrt(a)))
     distance_km = EARTH_RADIUS_KM * c
+
     return distance_km

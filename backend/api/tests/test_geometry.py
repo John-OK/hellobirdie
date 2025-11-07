@@ -1,6 +1,6 @@
 from django.test import TestCase
 from api.services.geometry import compute_bounding_box, haversine_km
-from math import cos, pi
+from math import cos, pi, radians
 
 
 class ComputeBoundingBoxTestCase(TestCase):
@@ -33,7 +33,7 @@ class ComputeBoundingBoxTestCase(TestCase):
         self.assertAlmostEqual(lat_max, self.LAT + radius_degrees_lat, delta=0.005)
 
     def test_returns_expected_longitude_extent_unrounded_at_40deg_lat(self):
-        """Test computes unrounded bbox for a mid‑longitude center at 40deg lat and 50 km radius;
+        """Test computes unrounded bbox for a mid‑longitude center at 40° lat and 50 km radius;
         longitude extent matches expected within tolerance (0.005°); mins < maxes."""
 
         radius_km = 50.0
@@ -78,8 +78,24 @@ class ComputeBoundingBoxTestCase(TestCase):
         self.assertGreater(extent_60deg, extent_40deg)
 
     def test_haversine_zero_distance_is_zero(self):
-        """Test that the haversine distance is zero for two points with the same coords"""
+        """Test that returns 0.0 km for identical coordinates"""
 
         haversine_distance = haversine_km(40, 111, 40, 111)
 
         self.assertEqual(haversine_distance, 0)
+
+    def test_haversine_one_degree_latitude_is_approx_111_32_km(self):
+        """Test that 1° latitude ~111.32 km (±0.2 km) from (0°, 0°) to (1°, 0°)"""
+
+        haversine_distance = haversine_km(0, 0, 1, 0)
+
+        self.assertAlmostEqual(haversine_distance, 111.32, delta=0.2)
+
+    def test_haversine_one_degree_longitude_at_40deg_lat_is_approx_111_32_cos40_km(
+        self,
+    ):
+        """Test that 1° longitude is ~(111.32 * cos(rad(40°))) km (±0.2 km) at 40° latitude"""
+
+        haversine_distance = haversine_km(40, 0, 40, 1)
+
+        self.assertAlmostEqual(haversine_distance, 111.32 * cos(radians(40)), delta=0.2)
