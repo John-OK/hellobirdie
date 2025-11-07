@@ -99,3 +99,11 @@ class ComputeBoundingBoxTestCase(TestCase):
         haversine_distance = haversine_km(40, 0, 40, 1)
 
         self.assertAlmostEqual(haversine_distance, 111.32 * cos(radians(40)), delta=0.2)
+
+    def test_haversine_is_commutative(self):
+        """Haversine is symmetric: d(A,B) == d(B,A) within a tiny tolerance"""
+
+        haversine_distance1 = haversine_km(10, 20, 15, 25)
+        haversine_distance2 = haversine_km(15, 25, 10, 20)
+
+        self.assertAlmostEqual(haversine_distance1, haversine_distance2, delta=0.000001)
