@@ -1,5 +1,5 @@
 from django.test import TestCase
-from api.services.search_planner import plan_query_boxes
+from api.services.search_planner import plan_query_boxes, SEAM_MIN, SEAM_MAX
 
 
 class SearchPlannerTestCase(TestCase):
@@ -20,3 +20,71 @@ class SearchPlannerTestCase(TestCase):
             self.assertIsInstance(coord, float)
         self.assertLess(lat_min, lat_max)
         self.assertLess(lon_min, lon_max)
+
+    def test_plan_boxes_pos_lon_crossing_returns_two_boxes(self):
+        """Test that two boxes returned for boxes crossing antimeridian with a positive longitude.
+        Splits at SEAM_MAX/SEAM_MIN and preserves identical lat bounds."""
+
+        boxes = plan_query_boxes(66.5, 179.8, 50)
+
+        box1 = boxes[0]
+        lat_min1 = box1[0]
+        lon_min1 = box1[1]
+        lat_max1 = box1[2]
+        lon_max1 = box1[3]
+
+        box2 = boxes[1]
+        lat_min2 = box2[0]
+        lon_min2 = box2[1]
+        lat_max2 = box2[2]
+        lon_max2 = box2[3]
+
+        self.assertIsInstance(boxes, list)
+        self.assertEqual(len(boxes), 2)
+        self.assertEqual(len(box1), 4)
+        self.assertEqual(len(box2), 4)
+        for box in boxes:
+            for coord in box:
+                self.assertIsInstance(coord, float)
+        self.assertLess(lat_min1, lat_max1)
+        self.assertLess(lon_min1, lon_max1)
+        self.assertLess(lat_min2, lat_max2)
+        self.assertLess(lon_min2, lon_max2)
+        self.assertEqual(lon_max1, SEAM_MAX)
+        self.assertEqual(lon_min2, SEAM_MIN)
+        self.assertEqual(lat_min1, lat_min2)
+        self.assertEqual(lat_max1, lat_max2)
+
+    def test_plan_boxes_neg_lon_crossing_returns_two_boxes(self):
+        """Test that two boxes returned for boxes crossing antimeridian with a negative longitude.
+        Splits at SEAM_MAX/SEAM_MIN and preserves identical lat bounds."""
+
+        boxes = plan_query_boxes(66.5, -179.8, 50)
+
+        box1 = boxes[0]
+        lat_min1 = box1[0]
+        lon_min1 = box1[1]
+        lat_max1 = box1[2]
+        lon_max1 = box1[3]
+
+        box2 = boxes[1]
+        lat_min2 = box2[0]
+        lon_min2 = box2[1]
+        lat_max2 = box2[2]
+        lon_max2 = box2[3]
+
+        self.assertIsInstance(boxes, list)
+        self.assertEqual(len(boxes), 2)
+        self.assertEqual(len(box1), 4)
+        self.assertEqual(len(box2), 4)
+        for box in boxes:
+            for coord in box:
+                self.assertIsInstance(coord, float)
+        self.assertLess(lat_min1, lat_max1)
+        self.assertLess(lon_min1, lon_max1)
+        self.assertLess(lat_min2, lat_max2)
+        self.assertLess(lon_min2, lon_max2)
+        self.assertEqual(lon_max1, SEAM_MAX)
+        self.assertEqual(lon_min2, SEAM_MIN)
+        self.assertEqual(lat_min1, lat_min2)
+        self.assertEqual(lat_max1, lat_max2)
