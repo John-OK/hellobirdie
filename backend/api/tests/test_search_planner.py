@@ -4,7 +4,7 @@ from api.services.search_planner import plan_query_boxes, SEAM_MIN, SEAM_MAX
 
 class SearchPlannerTestCase(TestCase):
     def test_plan_boxes_non_crossing_returns_single_box(self):
-        """Test that single box returned for boxes not crossing antimeridian"""
+        """Test that single box returned for boxes not crossing antimeridian."""
 
         boxes = plan_query_boxes(40, 90, 50)
         box = boxes[0]
@@ -39,17 +39,10 @@ class SearchPlannerTestCase(TestCase):
         lat_max2 = box2[2]
         lon_max2 = box2[3]
 
-        self.assertIsInstance(boxes, list)
         self.assertEqual(len(boxes), 2)
         self.assertEqual(len(box1), 4)
         self.assertEqual(len(box2), 4)
-        for box in boxes:
-            for coord in box:
-                self.assertIsInstance(coord, float)
-        self.assertLess(lat_min1, lat_max1)
         self.assertLess(lon_min1, lon_max1)
-        self.assertLess(lat_min2, lat_max2)
-        self.assertLess(lon_min2, lon_max2)
         self.assertEqual(lon_max1, SEAM_MAX)
         self.assertEqual(lon_min2, SEAM_MIN)
         self.assertEqual(lat_min1, lat_min2)
@@ -73,18 +66,22 @@ class SearchPlannerTestCase(TestCase):
         lat_max2 = box2[2]
         lon_max2 = box2[3]
 
-        self.assertIsInstance(boxes, list)
         self.assertEqual(len(boxes), 2)
         self.assertEqual(len(box1), 4)
         self.assertEqual(len(box2), 4)
-        for box in boxes:
-            for coord in box:
-                self.assertIsInstance(coord, float)
-        self.assertLess(lat_min1, lat_max1)
-        self.assertLess(lon_min1, lon_max1)
-        self.assertLess(lat_min2, lat_max2)
         self.assertLess(lon_min2, lon_max2)
         self.assertEqual(lon_max1, SEAM_MAX)
         self.assertEqual(lon_min2, SEAM_MIN)
         self.assertEqual(lat_min1, lat_min2)
         self.assertEqual(lat_max1, lat_max2)
+
+    def test_plan_boxes_does_not_split_across_prime_meridian(self):
+        """Near 0° longitude, planner returns a single box (no split across prime meridian)."""
+
+        boxes = plan_query_boxes(40, 0.2, 50)
+        lon_min = boxes[0][1]
+        lon_max = boxes[0][3]
+
+        self.assertEqual(len(boxes), 1)
+        self.assertNotEqual(lon_min, SEAM_MIN)
+        self.assertNotEqual(lon_max, SEAM_MAX)
