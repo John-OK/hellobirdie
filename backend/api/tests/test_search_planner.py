@@ -85,3 +85,14 @@ class SearchPlannerTestCase(TestCase):
         self.assertEqual(len(boxes), 1)
         self.assertNotEqual(lon_min, SEAM_MIN)
         self.assertNotEqual(lon_max, SEAM_MAX)
+
+    def test_plan_boxes_does_not_split_near_equator(self):
+        """Near 0° latitude and latitude straddles 0°,
+        planner returns a single box (equator crossing does not trigger split)."""
+
+        boxes = plan_query_boxes(0.2, 20, 50)
+        lat_min = boxes[0][0]
+        lat_max = boxes[0][2]
+
+        self.assertEqual(len(boxes), 1)
+        self.assertTrue(lat_min < 0 < lat_max)
