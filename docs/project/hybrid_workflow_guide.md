@@ -6,7 +6,7 @@ This document outlines the recommended workflow for HelloBirdie development usin
 
 - **Local Development First**: Use your local environment for daily development tasks
 - **Docker for Verification**: Use Docker to verify your code works in a production-like environment before committing
-- **Consistent Test Practices**: Always specify test module paths in both environments
+- **Consistent Test Practices**: Use pytest as the primary test runner in both environments
 
 ## Local Development Workflow
 
@@ -30,14 +30,14 @@ source .venv/bin/activate  # On Linux/Mac
 cd backend
 python manage.py runserver
 
-# Run tests (always specify the test module path)
+# Run all tests with pytest (uses test settings automatically via conftest.py)
+python -m pytest
+
+# Run a specific test file
+python -m pytest api/tests/test_health.py
+
+# Quick run against local settings (bypasses test settings)
 python manage.py test api.tests.<test_module>
-
-# Example: Test the health check endpoint
-python manage.py test api.tests.test_health
-
-# Run tests with test-specific settings
-DJANGO_ENV=test python manage.py test api.tests.<test_module>
 
 # Create migrations
 python manage.py makemigrations
@@ -62,14 +62,14 @@ Use Docker in these scenarios:
 # Start all services
 docker compose up -d
 
-# Run tests in Docker (always specify the test module path)
+# Run all tests in Docker (uses test settings automatically via conftest.py)
+docker compose exec backend pytest
+
+# Run a specific test file in Docker
+docker compose exec backend pytest api/tests/test_health.py
+
+# Quick run against local settings in Docker
 docker compose exec backend python manage.py test api.tests.<test_module>
-
-# Example: Test the health check endpoint
-docker compose exec backend python manage.py test api.tests.test_health
-
-# Run tests with test-specific settings in Docker
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
 
 # Run migrations in Docker
 docker compose exec backend python manage.py migrate

@@ -22,7 +22,7 @@ HelloBirdie is a web application that visualizes bird sighting data from the xen
 
 ### Backend
 
-- Django 5.1 + Python 3.13
+- Django 5.2 + Python 3.13
 - PostgreSQL 17
 - Hybrid development approach:
   - Local development with virtual environments (primary)

@@ -43,11 +43,11 @@ class HealthCheckTestCase(TestCase):
 Run the test to verify it fails (expected at this stage):
 
 ```bash
-# Using default settings
-python manage.py test api.tests.test_health
+# Using pytest (test settings applied automatically via conftest.py)
+python -m pytest api/tests/test_health.py
 
-# Or using test-specific settings
-DJANGO_ENV=test python manage.py test api.tests.test_health
+# Or using manage.py (quick run against local settings)
+python manage.py test api.tests.test_health
 ```
 
 You should see an error about 'health-check' not being a valid view or pattern name.
@@ -97,11 +97,11 @@ urlpatterns = [
 Run the test again to verify it now passes:
 
 ```bash
-# Using default settings
-python manage.py test api.tests.test_health
+# Using pytest (test settings applied automatically via conftest.py)
+python -m pytest api/tests/test_health.py
 
-# Or using test-specific settings
-DJANGO_ENV=test python manage.py test api.tests.test_health
+# Or using manage.py (quick run against local settings)
+python manage.py test api.tests.test_health
 ```
 
 You should see that the test passes successfully.

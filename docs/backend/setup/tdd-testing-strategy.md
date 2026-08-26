@@ -75,14 +75,25 @@ We employ a hybrid TDD approach with both local and Docker environments to maxim
 source .venv/bin/activate
 
 # Run all tests with pytest (from backend directory)
+# pytest is configured via pytest.ini and conftest.py, which automatically
+# use test settings (hellobirdie.settings.test) — no env vars needed
 cd backend
 python -m pytest
 
-# Run specific tests with clear module paths
-python manage.py test api.tests.test_models
+# Run a specific test file
+python -m pytest api/tests/test_models.py
+
+# Run a single test class or method
+python -m pytest api/tests/test_models.py::BirdModelTestCase::test_string_representation
+
+# Run tests matching a keyword pattern
+python -m pytest -k "filter_by_genus"
 
 # Run with coverage
 python -m pytest --cov=api
+
+# Quick run against local settings (bypasses test settings)
+python manage.py test api.tests.test_models
 ```
 
 ### Docker Verification (Secondary)
@@ -99,14 +110,17 @@ python -m pytest --cov=api
 # Start all services
 docker compose up -d
 
-# Run all tests in Docker
+# Run all tests in Docker (test settings auto-applied via conftest.py)
 docker compose exec backend pytest
 
-# Run specific tests with explicit module paths
-docker compose exec backend python manage.py test api.tests.test_models
+# Run a specific test file in Docker
+docker compose exec backend pytest api/tests/test_models.py
 
 # Run with coverage
 docker compose exec backend pytest --cov=api
+
+# Quick run against local settings in Docker
+docker compose exec backend python manage.py test api.tests.test_models
 ```
 
 > **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
@@ -117,12 +131,21 @@ The project uses a split settings approach with environment-specific configurati
 
 ### Setting the Test Environment
 
+pytest automatically uses test settings via `conftest.py`, which sets
+`DJANGO_ENV=test` before Django settings are loaded. No env vars are needed:
+
 ```bash
 # Run tests with test settings (local development)
-DJANGO_ENV=test python -m pytest
+python -m pytest
 
 # Run tests with test settings (Docker)
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test"
+docker compose exec backend pytest
+```
+
+To override and run against local settings instead:
+
+```bash
+DJANGO_ENV=local python -m pytest
 ```
 
 ### When to Use Test Settings
@@ -135,13 +158,11 @@ docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test"
 ### Benefits of Test Settings
 
 1. **Reliability**:
-
    - Uses dedicated PostgreSQL test database
    - Simpler password hashing for faster tests
    - Disabled non-essential middleware
 
 2. **Isolation**:
-
    - Separate test database prevents polluting development data
    - Disabled caching for predictable results
    - Controlled environment variables

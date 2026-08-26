@@ -4,7 +4,7 @@
 
 ### Required Software for Local Development (Primary)
 
-- Python 3.13.1
+- Python 3.13.15
   > Latest stable version with optimized performance and security features
 - PostgreSQL 17.4
   > Latest stable version for local database development
@@ -91,13 +91,11 @@ Our `tsconfig.json` enforces:
 ### Development Standards
 
 1. Type Safety
-
    - All components must have explicit type definitions
    - Use TypeScript utility types where appropriate
    - Implement proper error boundaries with type checking
 
 2. Component Architecture
-
    - Follow presentational/container pattern
    - Implement proper prop interfaces
    - Use typed custom hooks for shared logic
@@ -250,10 +248,13 @@ Run tools in both environments:
 ```bash
 # Run tests locally (primary workflow)
 cd backend
-python manage.py test api.tests.<test_module>  # Run specific tests
+python -m pytest                                    # Run all tests (test settings auto-applied)
+python -m pytest api/tests/test_health.py           # Run a specific test file
+python manage.py test api.tests.<test_module>       # Quick run against local settings
 
 # Run tests in Docker (verification)
-docker compose exec backend python manage.py test api.tests.<test_module>
+docker compose exec backend pytest
+docker compose exec backend pytest api/tests/test_health.py
 
 # Format code locally
 cd backend
@@ -373,13 +374,11 @@ These work in VS Code and similar IDEs:
 ### Initial Common Issues
 
 1. **PostgreSQL Connection Issues**
-
    - Ensure PostgreSQL service is running
    - Verify database name and credentials
    - Check port availability
 
 2. **Python Virtual Environment**
-
    - Ensure `venv` is activated
    - Check Python version matches project requirement
 
@@ -403,12 +402,14 @@ These work in VS Code and similar IDEs:
 ### Running Tests
 
 ```bash
-# Backend tests
-# Always specify the test module path to avoid import errors
-python manage.py test api.tests.<test_module>
+# Backend tests (pytest — test settings auto-applied via conftest.py)
+cd backend
+python -m pytest                                # Run all tests
+python -m pytest api/tests/test_health.py       # Run a specific test file
+python -m pytest --cov=api                      # Run with coverage
 
-# Example: Test the health check endpoint
-python manage.py test api.tests.test_health
+# Backend tests (manage.py — quick runs against local settings)
+python manage.py test api.tests.<test_module>
 
 # Frontend tests
 npm test

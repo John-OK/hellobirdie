@@ -5,7 +5,6 @@ This directory contains documentation specific to the HelloBirdie backend implem
 ## Contents
 
 - **[setup/](./setup/)** - Backend setup and configuration guides
-
   - [hybrid-backend-setup-guide.md](./setup/hybrid-backend-setup-guide.md) - Main setup guide
   - [details/](./setup/details/) - Step-by-step setup instructions
   - [guides/](./setup/guides/) - Supplementary backend guides
@@ -25,8 +24,8 @@ This directory contains documentation specific to the HelloBirdie backend implem
 
 ## Technology Stack
 
-- Python 3.13.1
-- Django 5.1.6
+- Python 3.13.15
+- Django 5.2
 - Django REST Framework 3.15.2
 - PostgreSQL 17.4
 - Docker for verification and containerization (secondary)

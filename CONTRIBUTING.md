@@ -41,11 +41,14 @@ source .venv/bin/activate
 cd backend
 python manage.py runserver
 
-# Run tests (always specify the test module path)
-python manage.py test api.tests.<test_module>
+# Run tests (test settings auto-applied via conftest.py)
+python -m pytest
 
-# Run tests with test-specific settings
-DJANGO_ENV=test python manage.py test api.tests.<test_module>
+# Run a specific test file
+python -m pytest api/tests/test_models.py
+
+# Quick run against local settings
+python manage.py test api.tests.<test_module>
 
 # Format code
 black .
@@ -58,11 +61,11 @@ isort .
 # Start Docker services
 docker compose up -d
 
-# Run tests in Docker
-docker compose exec backend python manage.py test api.tests.<test_module>
+# Run tests in Docker (test settings auto-applied)
+docker compose exec backend pytest
 
-# Run tests with test-specific settings in Docker
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
+# Quick run against local settings in Docker
+docker compose exec backend python manage.py test api.tests.<test_module>
 
 # Stop Docker when done
 docker compose down
@@ -73,14 +76,12 @@ See our [Hybrid Workflow Guide](docs/project/hybrid_workflow_guide.md) for detai
 ### Code Review Guidelines
 
 1. Testing:
-
    - Tests must be written first (TDD)
    - All tests must pass
    - Coverage must be maintained
    - Integration tests for API endpoints
 
 2. Code Quality:
-
    - Follow project style guide
    - Documentation must be updated
    - No security vulnerabilities
@@ -174,19 +175,15 @@ This ensures consistent development environments across the team and avoids conf
 ### SOLID Principles
 
 1. **Single Responsibility**: Classes and functions should do one thing well
-
    - Example: Separate data fetching from rendering
 
 2. **Open/Closed**: Open for extension, closed for modification
-
    - Example: Use strategy pattern for different map providers
 
 3. **Liskov Substitution**: Subtypes must be substitutable for base types
-
    - Example: All bird markers must work like base markers
 
 4. **Interface Segregation**: Many specific interfaces over one general
-
    - Example: Split IMapProps into IMapView and IMapControls
 
 5. **Dependency Inversion**: Depend on abstractions, not implementations

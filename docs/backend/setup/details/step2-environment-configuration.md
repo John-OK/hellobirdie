@@ -12,11 +12,11 @@ This file contains the core dependencies needed for both development and product
 
 ```
 # Core Django dependencies
-Django==5.1.6
+Django==5.2
 djangorestframework==3.15.2
 
-# Database - PostgreSQL adapter for Python 3.13.1
-psycopg==3.2.6  # Modern PostgreSQL adapter with Python 3.13.1 compatibility
+# Database - PostgreSQL adapter for Python 3.13.15
+psycopg==3.2.6  # Modern PostgreSQL adapter with Python 3.13.15 compatibility
 
 # Environment variables
 python-dotenv==1.0.0
@@ -265,7 +265,7 @@ The HelloBirdie project uses a hybrid workflow with a dual database configuratio
 - **Connection String**: `LOCAL_DATABASE_URL=postgres://hellobirdie_user:hellobirdie_password@localhost:5432/hellobirdie`
 - **Credentials**: Username `hellobirdie_user`, password `hellobirdie_password`
 - **Host**: `localhost` (your local PostgreSQL server)
-- **When Used**: For daily development with `python manage.py runserver` and `python manage.py test`
+- **When Used**: For daily development with `python manage.py runserver` and `python -m pytest`
 - **Why**: Faster iterations, better IDE integration, more secure than default credentials
 - **Note**: The user needs CREATEDB permission for running Django tests locally
 
@@ -274,7 +274,7 @@ The HelloBirdie project uses a hybrid workflow with a dual database configuratio
 - **Connection String**: `DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie`
 - **Credentials**: Username `postgres`, password `postgres`
 - **Host**: `db` (the Docker service name)
-- **When Used**: For verification before commits with `docker compose up` and `docker compose exec backend python manage.py test`
+- **When Used**: For verification before commits with `docker compose up` and `docker compose exec backend pytest`
 - **Why**: Ensures consistent environment for team collaboration and CI/CD
 
 > **Important**: In Step 3, you'll set up both configurations:

@@ -38,20 +38,20 @@ This guide builds upon the backend setup and provides detailed steps for impleme
   source .venv/bin/activate
   cd backend
 
-  # Using default development settings
-  python manage.py test api.tests
+  # Run all tests (test settings auto-applied via conftest.py)
+  python -m pytest
 
-  # Using test-specific settings
-  DJANGO_ENV=test python manage.py test api.tests
+  # Quick run against local settings
+  python manage.py test api.tests
 
   # Docker verification
   docker compose up -d
 
-  # Using default development settings
-  docker compose exec backend python manage.py test api.tests
+  # Run all tests in Docker (test settings auto-applied)
+  docker compose exec backend pytest
 
-  # Using test-specific settings
-  docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests"
+  # Quick run against local settings in Docker
+  docker compose exec backend python manage.py test api.tests
 
   docker compose down
   ```
