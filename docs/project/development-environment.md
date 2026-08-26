@@ -197,8 +197,8 @@ Required variables in `.env`:
 
 ```plaintext
 # Django settings
-DJANGO_ENV=local  # Options: local, test, production
-DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
+DJANGO_ENV=local  # Options: local, development, test, production
+# Do not set DJANGO_SETTINGS_MODULE here - it's handled by manage.py and settings/__init__.py
 DJANGO_SECRET_KEY=your-secret-key-here
 DJANGO_DEBUG=True  # Set to False in production
 

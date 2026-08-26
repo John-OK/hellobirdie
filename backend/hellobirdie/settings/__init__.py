@@ -7,5 +7,7 @@ if env == "production":
     from .production import *
 elif env == "test":
     from .test import *
+elif env in ("development", "local"):
+    from .local import *
 else:
     from .local import *
