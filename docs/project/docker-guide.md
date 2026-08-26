@@ -127,7 +127,6 @@ services:
       - "8000:8000"
     environment:
       - DJANGO_ENV=development
-      - DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
       - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@db:5432/hellobirdie
       - IN_DOCKER=True
@@ -263,7 +262,7 @@ We use `.env` files for configuration:
 # Development (.env)
 COMPOSE_PROJECT_NAME=hellobirdie
 DATABASE_URL=postgresql://user:password@db:5432/hellobirdie
-DJANGO_SETTINGS_MODULE=hellobirdie.settings.local
+DJANGO_ENV=development
 DEBUG=True
 ```
 

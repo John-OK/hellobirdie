@@ -119,7 +119,7 @@ Create a file named `.env.backend.sample` in the backend directory with the foll
 
 ```
 # Django settings
-DJANGO_ENV=local  # Options: local, test, production
+DJANGO_ENV=local  # Options: local, development, test, production
 # Do not set DJANGO_SETTINGS_MODULE here - it's handled by settings/__init__.py
 DJANGO_SECRET_KEY=your-secret-key-here
 DJANGO_DEBUG=True

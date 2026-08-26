@@ -124,7 +124,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_ENV=local # Must match the environment name used in settings/__init__.py
+      - DJANGO_ENV=development # Must match a recognized value in settings/__init__.py
       # Do not set DJANGO_SETTINGS_MODULE here - allow __init__.py to handle it based on DJANGO_ENV
       - IN_DOCKER=True # Helps settings determine correct database host
     env_file:
@@ -297,15 +297,14 @@ else:
 
 ### 5.3 Update manage.py
 
-Now we need to update the `manage.py` file to use our new settings module. Open the `backend/manage.py` file and modify the `os.environ.setdefault` line to point to our local settings:
+The `manage.py` file should point to the settings package (`hellobirdie.settings`), not a specific environment module. This lets the dispatch in `settings/__init__.py` select the right settings based on `DJANGO_ENV`:
 
 ```python
-# Find this line in manage.py
+# manage.py should have this line (it's the default — don't change it)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hellobirdie.settings")
-
-# Change it to:
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hellobirdie.settings.local")
 ```
+
+The dispatch in `settings/__init__.py` then loads `local.py` when `DJANGO_ENV` is `local` or `development`, `test.py` when it's `test`, and `production.py` when it's `production`.
 
 ### 5.4 PostgreSQL Setup for Local Development
 
@@ -377,9 +376,9 @@ docker compose down
    - Core dependencies used by settings files should be in `base.txt`
    - The Dockerfile is correctly installing requirements with `RUN pip install -r requirements/docker.txt`
 
-2. **Settings Module Not Found**: If you see `ModuleNotFoundError: No module named 'hellobirdie.settings.local'`:
-   - Check that your `DJANGO_SETTINGS_MODULE` environment variable in `docker-compose.yml` matches your actual settings path
-   - Verify the settings directory structure is correctly set up
+2. **Settings Module Not Found**: If you see `ModuleNotFoundError: No module named 'hellobirdie.settings'`:
+   - Check that `DJANGO_SETTINGS_MODULE` is set to `hellobirdie.settings` (the package), not a specific module like `hellobirdie.settings.local`
+   - Verify the settings directory structure is correctly set up with `__init__.py`, `base.py`, `local.py`, and `test.py`
 
 3. **Database Connection Issues**: If you see database connection errors:
    - Ensure the database service is running (`docker compose ps`)
@@ -417,8 +416,7 @@ If you encounter issues with the Docker setup, here are some common problems and
 
 1. **ALLOWED_HOSTS Error**: If you see `CommandError: You must set settings.ALLOWED_HOSTS if DEBUG is False`, check that:
    - Your `docker-compose.yml` includes the `ALLOWED_HOSTS` environment variable
-   - Your `docker-compose.yml` explicitly sets `DJANGO_SETTINGS_MODULE=hellobirdie.settings.local`
-   - Your `Dockerfile` sets `ENV DJANGO_ENV=development`
+   - Your `Dockerfile` sets `ENV DJANGO_ENV=development` (maps to `local.py` via `settings/__init__.py`)
 
 ### Troubleshooting Local Development
 
@@ -438,8 +436,7 @@ Here are some common issues you might encounter during local development:
 
 3. **Missing SECRET_KEY Error**: If you see `django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty`, make sure you've defined a SECRET_KEY in your settings file.
    - Your `docker-compose.yml` includes the `ALLOWED_HOSTS` environment variable
-   - Your `docker-compose.yml` explicitly sets `DJANGO_SETTINGS_MODULE=hellobirdie.settings.local`
-   - Your `Dockerfile` sets `ENV DJANGO_ENV=development`
+   - Your `Dockerfile` sets `ENV DJANGO_ENV=development` (maps to `local.py` via `settings/__init__.py`)
    - Your Django settings properly read these environment variables
 
 4. **Database Connection Issues**: If the backend can't connect to the database:
