@@ -5,7 +5,6 @@
 This document serves multiple purposes:
 
 1. **For New Team Members**: If you're joining the project, you likely won't need to follow this entire guide. Instead, you should:
-
    - Clone the existing repository
    - Follow the [Development Environment Setup](../../project/development-environment.md) guide
    - Review this document to understand how the backend was structured and why
@@ -90,7 +89,7 @@ Implement a health check endpoint following TDD principles. For detailed impleme
 - Write a test for the health check endpoint before implementing it in `backend/api/tests/test_health.py`
 - Run the test and verify it fails (expected at this stage):
   ```bash
-  python manage.py test api.tests.test_health
+  python -m pytest api/tests/test_health.py
   ```
 
 #### GREEN Phase
@@ -100,7 +99,7 @@ Implement a health check endpoint following TDD principles. For detailed impleme
 - Run the test again to verify it passes:
 
   ```bash
-  python manage.py test api.tests.test_health
+  python -m pytest api/tests/test_health.py
   ```
 
 - Commit Point: "Health check endpoint implementation"
@@ -127,8 +126,8 @@ Follow the [Step 5: Settings Structure Refactoring](./details/step5-settings-str
   ```
 - Run tests to ensure refactoring didn't break functionality:
   ```bash
+  python -m pytest api/tests/test_health.py
   python manage.py test api.tests.test_health
-  DJANGO_ENV=test python manage.py test api.tests.test_health
   ```
 - Commit Point: "Django settings structure refactoring"
   > Why: Improves project organization while maintaining functionality
@@ -199,17 +198,17 @@ source .venv/bin/activate
 cd backend
 python manage.py runserver
 
-# Run tests
-# Always specify the test module path to avoid import errors
+# Run tests (test settings auto-applied via conftest.py)
+python -m pytest
+
+# Run a specific test file
+python -m pytest api/tests/test_health.py
+
+# Quick run against local settings
 python manage.py test api.tests.<test_module>
 
-# Example: Test the health check endpoint
-python manage.py test api.tests.test_health
-# or with pytest
-pytest
-
 # Run tests with coverage
-pytest --cov=api
+python -m pytest --cov=api
 ```
 
 ### PostgreSQL Adapter Installation for Local Development
@@ -261,18 +260,20 @@ pip install -r backend/requirements/local.txt
 # Start services
 docker compose up -d
 
-# Run Django tests
-# Always specify the test module path to avoid import errors
-docker compose exec backend python manage.py test api.tests.<test_module>
-
-# Example: Test the health check endpoint
-docker compose exec backend python manage.py test api.tests.test_health
-
-# Run pytest tests with default settings
+# Run tests (test settings auto-applied via conftest.py)
 docker compose exec backend pytest
 
-# Run tests with explicit test settings
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test"
+# Run a specific test file
+docker compose exec backend pytest api/tests/test_health.py
+
+# Quick run against local settings
+docker compose exec backend python manage.py test api.tests.<test_module>
+
+# Run all tests (test settings auto-applied via conftest.py)
+docker compose exec backend pytest
+
+# Quick run against local settings
+docker compose exec backend python manage.py test api.tests.test_health
 
 # Run with coverage
 docker compose exec backend pytest --cov=api
@@ -280,7 +281,7 @@ docker compose exec backend pytest --cov=api
 # Shut down containers
 docker compose down
 
-> **Note:** Use `DJANGO_ENV=test` when running comprehensive test suites or when you need test-specific optimizations. See [TDD Testing Strategy](./tdd-testing-strategy.md#split-settings-and-tdd) for details.
+> **Note:** pytest automatically applies test settings via `conftest.py` (which sets `DJANGO_ENV=test`). To override and run against local settings, use `DJANGO_ENV=local python -m pytest`. See [TDD Testing Strategy](./tdd-testing-strategy.md#split-settings-and-tdd) for details.
 
 > **Note:** For Docker Compose V1 (older versions), use `docker-compose` instead of `docker compose`. The project requires Docker Compose 2.33.0 or newer, which uses the V2 syntax without the hyphen.
 ```
@@ -290,12 +291,10 @@ docker compose down
 ### Common Issues
 
 1. **Import Errors After Settings Refactoring**
-
    - Check that your `BASE_DIR` is correctly defined in `base.py`
    - Verify that `__init__.py` is properly loading the correct settings file
 
 2. **Test Database Issues**
-
    - Ensure test settings are using the correct PostgreSQL test database
    - Check that the test database exists and is accessible
    - Verify that migrations are applied before running tests

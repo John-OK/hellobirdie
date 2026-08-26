@@ -79,7 +79,7 @@ Now that we have the Django project structure in place, let's set up Docker for 
 Create a file named `Dockerfile` in the `backend/` directory with the following content:
 
 ```dockerfile
-FROM python:3.13.1-slim
+FROM python:3.13.15-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -373,13 +373,11 @@ docker compose down
 ### Common Docker Setup Issues
 
 1. **Missing Dependencies**: If you see errors like `ModuleNotFoundError: No module named 'package_name'`, ensure:
-
    - The package is included in the appropriate requirements file
    - Core dependencies used by settings files should be in `base.txt`
    - The Dockerfile is correctly installing requirements with `RUN pip install -r requirements/docker.txt`
 
 2. **Settings Module Not Found**: If you see `ModuleNotFoundError: No module named 'hellobirdie.settings.local'`:
-
    - Check that your `DJANGO_SETTINGS_MODULE` environment variable in `docker-compose.yml` matches your actual settings path
    - Verify the settings directory structure is correctly set up
 
@@ -400,11 +398,14 @@ docker compose logs backend
 docker compose exec backend python manage.py [command]
 
 # Run tests (you'll implement these in Step 4)
-# Always specify the test module path to avoid import errors
-docker compose exec backend python manage.py test api.tests.<test_module>
+# pytest auto-applies test settings via conftest.py
+docker compose exec backend pytest
 
-# Example: Test the health check endpoint
-docker compose exec backend python manage.py test api.tests.test_health
+# Run a specific test file
+docker compose exec backend pytest api/tests/test_health.py
+
+# Quick run against local settings
+docker compose exec backend python manage.py test api.tests.<test_module>
 
 # Stop all containers when you're done
 docker compose down
@@ -424,7 +425,6 @@ If you encounter issues with the Docker setup, here are some common problems and
 Here are some common issues you might encounter during local development:
 
 1. **PostgreSQL Connection Issues**: If you see database connection errors:
-
    - Ensure PostgreSQL is installed and running on your system
    - Verify that the database user and database exist
    - Check that the credentials in your `.env` file match your PostgreSQL setup
@@ -432,27 +432,23 @@ Here are some common issues you might encounter during local development:
    - Try connecting directly with `psql -U hellobirdie_user -d hellobirdie` to test credentials
 
 2. **Settings Import Issues**: If you see `NameError: name 'INSTALLED_APPS' is not defined` or similar errors, check that:
-
    - Your settings import path is correct
    - The `manage.py` file is pointing to the correct settings module
    - All required settings are defined in your settings file
 
 3. **Missing SECRET_KEY Error**: If you see `django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty`, make sure you've defined a SECRET_KEY in your settings file.
-
    - Your `docker-compose.yml` includes the `ALLOWED_HOSTS` environment variable
    - Your `docker-compose.yml` explicitly sets `DJANGO_SETTINGS_MODULE=hellobirdie.settings.local`
    - Your `Dockerfile` sets `ENV DJANGO_ENV=development`
    - Your Django settings properly read these environment variables
 
 4. **Database Connection Issues**: If the backend can't connect to the database:
-
    - Ensure the database container is running (`docker compose ps`)
    - Check that port mappings are correct and not conflicting with local services
    - Verify the database connection settings in `local.py` match your Docker configuration
    - For Docker-to-Docker communication, use the service name (`db`) as the host
 
 5. **Permission Denied Errors**: If you see permission errors with Docker commands:
-
    - Use `sudo` before Docker commands
    - Or add your user to the Docker group: `sudo usermod -aG docker $USER` and log out/in
 

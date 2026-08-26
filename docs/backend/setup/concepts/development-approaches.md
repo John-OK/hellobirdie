@@ -57,12 +57,11 @@ python manage.py runserver
 # Start all services
 docker compose up
 
-# Run a command in the container
-# Run tests with specific module path to avoid import errors
-docker compose exec backend python manage.py test api.tests.<test_module>
+# Run tests in the container (test settings auto-applied via conftest.py)
+docker compose exec backend pytest
 
 # Example: Test the health check endpoint
-docker compose exec backend python manage.py test api.tests.test_health
+docker compose exec backend pytest api/tests/test_health.py
 
 # Rebuild after dependency changes
 docker compose build
@@ -73,14 +72,14 @@ docker compose build
 ## TDD Workflow in Hybrid Environment
 
 1. Write tests in local environment
-2. Run tests locally using regular or test-specific settings:
+2. Run tests locally using pytest (test settings auto-applied via conftest.py):
 
    ```bash
-   # Regular development settings
-   python manage.py test api.tests.<test_module>
+   # Run all tests with test settings
+   python -m pytest
 
-   # Test-specific settings
-   DJANGO_ENV=test python manage.py test api.tests.<test_module>
+   # Quick run against local settings
+   python manage.py test api.tests.<test_module>
    ```
 
 3. Implement features locally
@@ -90,11 +89,11 @@ docker compose build
    ```bash
    docker compose up -d
 
-   # Regular development settings
-   docker compose exec backend python manage.py test api.tests.<test_module>
+   # Run all tests with test settings
+   docker compose exec backend pytest
 
-   # Test-specific settings
-   docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
+   # Quick run against local settings
+   docker compose exec backend python manage.py test api.tests.<test_module>
    ```
 
 6. Create pull request with all tests passing in both environments

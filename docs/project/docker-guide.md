@@ -38,7 +38,6 @@ Additional Requirements:
 Help establish a hybrid development workflow, where:
 
 1. **Local Development (Primary)**
-
    - Day-to-day development happens in a local Python virtual environment
    - Faster iteration and simplified debugging
    - Direct access to Django commands
@@ -157,7 +156,7 @@ volumes:
 ### 2. Backend Dockerfile
 
 ```dockerfile
-FROM python:3.13.1-slim
+FROM python:3.13.15-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -228,24 +227,22 @@ docker compose up -d
 cd frontend
 npm run dev
 
-# Run backend tests
-# Always specify the test module path to avoid import errors
+# Run backend tests (test settings auto-applied via conftest.py)
 
-# Using default development settings
+# Run all tests
+docker compose exec backend pytest
+
+# Run a specific test file
+docker compose exec backend pytest api/tests/test_health.py
+
+# Run a specific test class
+docker compose exec backend pytest api/tests/test_health.py::HealthCheckTestCase
+
+# Run a specific test method
+docker compose exec backend pytest api/tests/test_health.py::HealthCheckTestCase::test_health_check_returns_ok_status
+
+# Quick run against local settings
 docker compose exec backend python manage.py test api.tests.<test_module>
-
-# Using test-specific settings
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
-
-# Examples:
-# Test a specific module
-docker compose exec backend python manage.py test api.tests.test_health
-
-# Test a specific class with test-specific settings
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.test_health:HealthCheckTestCase"
-
-# Test a specific method with test-specific settings
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.test_health:HealthCheckTestCase.test_health_check_returns_ok_status"
 
 # Format backend code
 docker compose exec backend black .
@@ -314,17 +311,14 @@ sudo docker compose up
 ## Best Practices
 
 1. **Always use docker compose up -d**
-
    - Starts containers in detached mode
    - Keeps your terminal free for other commands
 
 2. **Check logs when troubleshooting**
-
    - Use `docker compose logs -f [service]`
    - Helps identify issues quickly
 
 3. **Clean up regularly**
-
    - Remove unused containers: `docker compose down`
    - Clean volumes when needed: `docker compose down -v`
 

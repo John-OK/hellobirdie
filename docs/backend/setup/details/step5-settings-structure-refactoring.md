@@ -298,11 +298,11 @@ Run tests to ensure the refactoring didn't break functionality:
 #### Local Testing (Development)
 
 ```bash
-# Run tests with local settings
-python manage.py test api.tests.test_health
+# Run tests with pytest (test settings applied automatically via conftest.py)
+python -m pytest api/tests/test_health.py
 
-# Run tests with test settings
-DJANGO_ENV=test python manage.py test api.tests.test_health
+# Quick run against local settings
+python manage.py test api.tests.test_health
 ```
 
 #### Docker Testing (Pre-Commit Verification)
@@ -313,11 +313,11 @@ Following our hybrid approach, also verify in Docker before committing:
 # From the project root
 docker compose up -d
 
-# Run tests in the Docker container
-docker compose exec backend python manage.py test api.tests.test_health
+# Run tests in the Docker container (test settings applied automatically)
+docker compose exec backend pytest api/tests/test_health.py
 
-# Or with test settings explicitly
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.test_health"
+# Quick run against local settings in Docker
+docker compose exec backend python manage.py test api.tests.test_health
 ```
 
 This ensures tests pass in both local and Docker environments, which is essential for our hybrid testing workflow.

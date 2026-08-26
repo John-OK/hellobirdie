@@ -29,12 +29,10 @@ The database settings were already configured in the previous step as part of th
 During this review, check that:
 
 - **The correct environment variables are being used**:
-
   - In Docker: `DATABASE_URL` or `POSTGRES_DB`, `POSTGRES_USER`, etc.
   - In local development: `LOCAL_DATABASE_URL` or `LOCAL_POSTGRES_DB`, `LOCAL_POSTGRES_USER`, etc.
 
 - **The hybrid approach correctly handles both Docker and local development**:
-
   - Docker uses the `IN_DOCKER=true` environment variable to determine the context
   - Database connection uses `db` as host in Docker but `localhost` in local development
 
@@ -225,7 +223,7 @@ Let's verify that our database configuration works correctly in the local enviro
 
 ```bash
 # Verify database connection by running the health check test
-python manage.py test api.tests.test_health
+python -m pytest api/tests/test_health.py
 
 # Start the development server
 python manage.py runserver
@@ -239,7 +237,7 @@ Verify the Docker environment configuration:
 
 ```bash
 # Verify database connection in Docker
-docker compose exec backend python manage.py test api.tests.test_health
+docker compose exec backend pytest api/tests/test_health.py
 
 # Check the health endpoint in Docker
 curl http://localhost:8001/api/health-check/
@@ -252,17 +250,20 @@ curl http://localhost:8001/api/health-check/
 For running other tests in your project, use these patterns:
 
 ```bash
-# Local environment with specific test module
+# Local environment — run all tests (test settings auto-applied via conftest.py)
+python -m pytest
+
+# Local environment — run a specific test file
+python -m pytest api/tests/test_health.py
+
+# Local environment — quick run against local settings
 python manage.py test api.tests.<test_module>
 
-# Local environment with test settings
-DJANGO_ENV=test python manage.py test api.tests.<test_module>
+# Docker environment — run all tests (test settings auto-applied)
+docker compose exec backend pytest
 
-# Docker environment with specific test module
+# Docker environment — quick run against local settings
 docker compose exec backend python manage.py test api.tests.<test_module>
-
-# Docker environment with test settings
-docker compose exec backend bash -c "DJANGO_ENV=test python manage.py test api.tests.<test_module>"
 
 # Stop Docker containers when done
 docker compose down
