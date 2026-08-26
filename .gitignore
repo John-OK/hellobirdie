@@ -114,3 +114,11 @@ ENV/
 backend/.env
 .env.sample
 backend/.env.sample
+
+# Syncthing
+.stfolder/
+.stignore
+.sync*
+
+# Personal notes folder
+.notes/
